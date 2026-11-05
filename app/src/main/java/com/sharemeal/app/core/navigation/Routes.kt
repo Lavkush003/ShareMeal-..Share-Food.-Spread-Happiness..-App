@@ -3,8 +3,12 @@ package com.sharemeal.app.core.navigation
 object Routes {
     const val SPLASH = "splash"
     const val ONBOARDING = "onboarding"
+    const val WELCOME = "welcome"
     const val LOGIN = "auth/login"
+    const val FORGOT_PASSWORD = "auth/forgot-password"
     const val REGISTER = "auth/register"
+    const val REGISTER_DONOR = "auth/register/donor"
+    const val REGISTER_NGO = "auth/register/ngo"
 
     const val DONOR_DASHBOARD = "donor/dashboard"
     const val DONOR_ADD_DONATION = "donor/donations/add"

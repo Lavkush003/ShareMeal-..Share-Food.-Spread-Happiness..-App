@@ -14,11 +14,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sharemeal.app.R
 import com.sharemeal.app.core.ui.Spacing
 import com.sharemeal.app.core.ui.components.ShareMealLogo
@@ -26,12 +29,16 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(
-    onFinished: () -> Unit,
-    modifier: Modifier = Modifier
+    onDestination: (SplashDestination) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: SplashViewModel = hiltViewModel()
 ) {
-    LaunchedEffect(Unit) {
-        delay(1_400)
-        onFinished()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(state.destination) {
+        val destination = state.destination ?: return@LaunchedEffect
+        delay(700)
+        onDestination(destination)
     }
 
     Box(

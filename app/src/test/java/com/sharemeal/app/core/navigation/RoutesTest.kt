@@ -9,8 +9,12 @@ class RoutesTest {
     private val routes = listOf(
         Routes.SPLASH,
         Routes.ONBOARDING,
+        Routes.WELCOME,
         Routes.LOGIN,
+        Routes.FORGOT_PASSWORD,
         Routes.REGISTER,
+        Routes.REGISTER_DONOR,
+        Routes.REGISTER_NGO,
         Routes.DONOR_DASHBOARD,
         Routes.DONOR_ADD_DONATION,
         Routes.DONOR_DONATIONS,
