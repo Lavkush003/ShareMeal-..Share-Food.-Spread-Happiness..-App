@@ -1,0 +1,53 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+captures/
+.navigation/
+.externalNativeBuild/
+.cxx/
+
+# Kotlin
+.kotlin/
+
+# Local configuration
+local.properties
+keystore.properties
+signing.properties
+secrets.properties
+
+# Signing files
+*.jks
+*.keystore
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and crash dumps
+*.log
+logs/
+*.hprof
+hs_err_pid*
+
+# Build artifacts
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+
+# Firebase configuration (contains API keys)
+google-services.json
