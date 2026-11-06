@@ -29,6 +29,7 @@ import com.sharemeal.app.feature.authentication.RoleSelectionScreen
 import com.sharemeal.app.feature.authentication.WelcomeScreen
 import com.sharemeal.app.feature.dashboard.DonorDashboardScreen
 import com.sharemeal.app.feature.dashboard.NgoDashboardScreen
+import com.sharemeal.app.feature.donation.FoodDonationScreen
 import com.sharemeal.app.feature.onboarding.OnboardingScreen
 import com.sharemeal.app.feature.profile.ProfileScreen
 import com.sharemeal.app.feature.registration.DonorRegistrationScreen
@@ -177,10 +178,9 @@ fun ShareMealApp(
                         requiredRole = UserRole.DONOR,
                         navController = navController
                     ) {
-                        FeaturePlaceholderScreen(
-                            title = stringResource(R.string.placeholder_add_donation_title),
-                            description = stringResource(R.string.placeholder_add_donation_body),
-                            onBack = { navController.popBackStack() }
+                        FoodDonationScreen(
+                            onBack = { navController.popBackStack() },
+                            onPublished = { navController.popBackStack() }
                         )
                     }
                 }

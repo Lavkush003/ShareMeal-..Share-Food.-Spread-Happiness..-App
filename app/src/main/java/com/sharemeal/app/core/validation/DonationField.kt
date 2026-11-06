@@ -1,0 +1,26 @@
+package com.sharemeal.app.core.validation
+
+enum class DonationField {
+    TITLE,
+    DESCRIPTION,
+    CATEGORY,
+    IMAGE,
+    QUANTITY,
+    QUANTITY_UNIT,
+    CUSTOM_QUANTITY_UNIT,
+    CLASSIFICATION,
+    PREPARATION_DATE,
+    PREPARATION_TIME,
+    PICKUP_START,
+    PICKUP_DEADLINE,
+    STORAGE_CONDITIONS,
+    PACKAGING,
+    ALLERGENS,
+    CONDITION_DECLARATION,
+    PICKUP_ADDRESS,
+    CITY,
+    STATE,
+    PIN_CODE,
+    CONTACT_PERSON,
+    CONTACT_PHONE
+}

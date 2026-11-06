@@ -27,7 +27,6 @@ android {
 
     buildTypes {
         debug {
-            applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
             buildConfigField("boolean", "USE_MOCK_DATA", "true")
             buildConfigField("String", "API_BASE_URL", "\"https://api.sharemeal.app/api/v1/\"")
