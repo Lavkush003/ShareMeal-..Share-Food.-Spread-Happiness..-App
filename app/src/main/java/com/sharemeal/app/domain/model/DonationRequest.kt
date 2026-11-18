@@ -21,5 +21,6 @@ data class DonationRequest(
     val donationTitle: String? = null,
     val rejectionReason: String? = null,
     val idempotencyKey: String? = null,
-    val updatedAt: Long? = null
+    val updatedAt: Long? = null,
+    val syncPending: Boolean = false
 )

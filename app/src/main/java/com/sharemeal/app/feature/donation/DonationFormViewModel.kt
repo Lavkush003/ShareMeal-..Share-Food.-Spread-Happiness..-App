@@ -16,6 +16,7 @@ import com.sharemeal.app.domain.model.DonationQuantityUnit
 import com.sharemeal.app.domain.model.FoodCategory
 import com.sharemeal.app.domain.model.FoodClassification
 import com.sharemeal.app.domain.model.FoodDonation
+import com.sharemeal.app.domain.repository.DonationDraftRepository
 import com.sharemeal.app.domain.repository.DonationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Calendar
@@ -33,7 +34,8 @@ data class DonationFormUiState(
     val form: DonationForm = DonationForm(),
     val fieldErrors: Map<DonationField, Int> = emptyMap(),
     val isPublishing: Boolean = false,
-    @StringRes val errorMessageRes: Int? = null
+    @StringRes val errorMessageRes: Int? = null,
+    @StringRes val draftMessageRes: Int? = null
 )
 
 sealed interface DonationFormEvent {
@@ -43,8 +45,14 @@ sealed interface DonationFormEvent {
 @HiltViewModel
 class DonationFormViewModel @Inject constructor(
     private val donationRepository: DonationRepository,
-    private val imageRepository: ImageRepository
+    private val imageRepository: ImageRepository,
+    private val draftRepository: DonationDraftRepository
 ) : ViewModel() {
+
+    constructor(
+        donationRepository: DonationRepository,
+        imageRepository: ImageRepository
+    ) : this(donationRepository, imageRepository, NoOpDonationDraftRepository())
 
     private val _uiState = MutableStateFlow(DonationFormUiState())
     val uiState: StateFlow<DonationFormUiState> = _uiState.asStateFlow()
@@ -244,6 +252,41 @@ class DonationFormViewModel @Inject constructor(
         }
     }
 
+    fun saveDraft() {
+        viewModelScope.launch {
+            when (draftRepository.saveDraft(currentDraft())) {
+                is AppResult.Success -> _uiState.update {
+                    it.copy(draftMessageRes = R.string.donation_draft_saved)
+                }
+
+                is AppResult.Failure -> _uiState.update {
+                    it.copy(draftMessageRes = R.string.error_generic)
+                }
+            }
+        }
+    }
+
+    fun restoreDraft() {
+        viewModelScope.launch {
+            when (val result = draftRepository.loadLatestDraft()) {
+                is AppResult.Success -> result.data?.let { draft ->
+                    _uiState.update {
+                        it.copy(
+                            form = draft.toForm(),
+                            fieldErrors = emptyMap(),
+                            errorMessageRes = null,
+                            draftMessageRes = null
+                        )
+                    }
+                }
+
+                is AppResult.Failure -> _uiState.update {
+                    it.copy(draftMessageRes = R.string.error_generic)
+                }
+            }
+        }
+    }
+
     fun publishDonation() {
         val state = _uiState.value
         if (state.isPublishing) return
@@ -256,38 +299,7 @@ class DonationFormViewModel @Inject constructor(
             return
         }
 
-        val form = state.form
-        val preparationDate = requireNotNull(form.preparationDateMillis)
-        val preparationTime = requireNotNull(form.preparationTimeMinutes)
-        val pickupStart = requireNotNull(form.pickupStartMinutes)
-        val pickupDeadline = requireNotNull(form.pickupDeadlineMinutes)
-
-        val draft = DonationDraft(
-            title = form.title.trim(),
-            description = form.description.trim(),
-            category = requireNotNull(form.category),
-            images = form.images,
-            quantity = form.quantity.trim().toInt(),
-            quantityUnit = requireNotNull(form.quantityUnit),
-            customQuantityUnit = form.customQuantityUnit
-                .trim()
-                .takeIf { form.quantityUnit == DonationQuantityUnit.OTHER && it.isNotEmpty() },
-            classification = requireNotNull(form.classification),
-            preparedAt = combineDateAndTime(preparationDate, preparationTime),
-            pickupWindowStart = combineDateAndTime(preparationDate, pickupStart),
-            pickupDeadline = combineDateAndTime(preparationDate, pickupDeadline),
-            storageConditions = form.storageConditions.trim(),
-            packaging = form.packaging.trim(),
-            allergenInformation = form.allergenInformation.trim(),
-            foodConditionDeclared = form.conditionDeclared,
-            pickupAddress = form.pickupAddress.trim(),
-            city = form.city.trim(),
-            state = form.state.trim(),
-            pinCode = form.pinCode.trim(),
-            contactPerson = form.contactPerson.trim(),
-            contactPhone = form.contactPhone.trim(),
-            specialInstructions = form.specialInstructions.trim().takeIf(String::isNotEmpty)
-        )
+        val draft = currentDraft()
 
         viewModelScope.launch {
             _uiState.update {
@@ -315,6 +327,70 @@ class DonationFormViewModel @Inject constructor(
         }
     }
 
+    private fun currentDraft(): DonationDraft {
+        val form = _uiState.value.form
+        val preparationDate = form.preparationDateMillis ?: System.currentTimeMillis()
+        val preparationTime = form.preparationTimeMinutes ?: 8 * 60
+        val pickupStart = form.pickupStartMinutes ?: 9 * 60
+        val pickupDeadline = form.pickupDeadlineMinutes ?: 18 * 60
+        return DonationDraft(
+            title = form.title.trim(),
+            description = form.description.trim(),
+            category = form.category ?: FoodCategory.OTHER,
+            images = form.images,
+            quantity = form.quantity.trim().toIntOrNull() ?: 0,
+            quantityUnit = form.quantityUnit ?: DonationQuantityUnit.OTHER,
+            customQuantityUnit = form.customQuantityUnit
+                .trim()
+                .takeIf { form.quantityUnit == DonationQuantityUnit.OTHER && it.isNotEmpty() },
+            classification = form.classification ?: FoodClassification.OTHER,
+            preparedAt = combineDateAndTime(preparationDate, preparationTime),
+            pickupWindowStart = combineDateAndTime(preparationDate, pickupStart),
+            pickupDeadline = combineDateAndTime(preparationDate, pickupDeadline),
+            storageConditions = form.storageConditions.trim(),
+            packaging = form.packaging.trim(),
+            allergenInformation = form.allergenInformation.trim(),
+            foodConditionDeclared = form.conditionDeclared,
+            pickupAddress = form.pickupAddress.trim(),
+            city = form.city.trim(),
+            state = form.state.trim(),
+            pinCode = form.pinCode.trim(),
+            contactPerson = form.contactPerson.trim(),
+            contactPhone = form.contactPhone.trim(),
+            specialInstructions = form.specialInstructions.trim().takeIf(String::isNotEmpty)
+        )
+    }
+
+    private fun DonationDraft.toForm(): DonationForm = DonationForm(
+        title = title,
+        description = description,
+        category = category,
+        images = images,
+        quantity = quantity.toString(),
+        quantityUnit = quantityUnit,
+        customQuantityUnit = customQuantityUnit.orEmpty(),
+        classification = classification,
+        preparationDateMillis = preparedAt,
+        preparationTimeMinutes = minutesOfDay(preparedAt),
+        pickupStartMinutes = minutesOfDay(pickupWindowStart),
+        pickupDeadlineMinutes = minutesOfDay(pickupDeadline),
+        storageConditions = storageConditions,
+        packaging = packaging,
+        allergenInformation = allergenInformation,
+        conditionDeclared = foodConditionDeclared,
+        pickupAddress = pickupAddress,
+        city = city,
+        state = state,
+        pinCode = pinCode,
+        contactPerson = contactPerson,
+        contactPhone = contactPhone,
+        specialInstructions = specialInstructions.orEmpty()
+    )
+
+    private fun minutesOfDay(timestamp: Long): Int = Calendar.getInstance().apply {
+        timeInMillis = timestamp
+    }.let { calendar -> calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE) }
+
     private fun combineDateAndTime(dateMillis: Long, minutes: Int): Long =
         Calendar.getInstance().apply {
             timeInMillis = dateMillis
@@ -333,4 +409,10 @@ class DonationFormViewModel @Inject constructor(
     companion object {
         const val MAX_IMAGES = 5
     }
+}
+
+private class NoOpDonationDraftRepository : DonationDraftRepository {
+    override suspend fun saveDraft(draft: DonationDraft): AppResult<String> = AppResult.Success("")
+
+    override suspend fun loadLatestDraft(): AppResult<DonationDraft?> = AppResult.Success(null)
 }

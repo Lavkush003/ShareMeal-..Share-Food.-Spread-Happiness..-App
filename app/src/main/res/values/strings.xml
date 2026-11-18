@@ -353,6 +353,7 @@
     <string name="request_status_collected">Collected</string>
     <string name="request_status_completed">Completed</string>
     <string name="request_status_expired">Expired</string>
+    <string name="request_status_pending_sync">Pending sync</string>
 
     <string name="request_untitled_donation">Food donation</string>
     <string name="request_card_subtitle">%1$s · %2$s</string>
@@ -532,4 +533,21 @@
     <string name="donor_action_completed_body">Review donations that reached communities.</string>
     <string name="ngo_action_completed_title">Completed distributions</string>
     <string name="ngo_action_completed_body">Review confirmed collections and distribution records.</string>
+    <string name="sync_banner_offline">Offline. Changes stay on this device.</string>
+    <string name="sync_banner_pending">%1$d change(s) waiting to sync.</string>
+    <string name="sync_banner_conflict">Some changes need review because server data changed.</string>
+    <string name="sync_banner_failed">Some changes could not be synchronized.</string>
+    <string name="sync_banner_synced">All changes are synchronized.</string>
+    <string name="sync_action_retry">Retry</string>
+    <string name="offline_settings_title">Offline data</string>
+    <string name="offline_settings_intro">ShareMeal keeps a local copy of listings, profiles and activity so you can keep browsing without a connection.</string>
+    <string name="offline_settings_status">Synchronization status</string>
+    <string name="offline_settings_cached_donations">Cached donation listings: %1$d</string>
+    <string name="offline_settings_last_synced">Last synchronized: %1$s</string>
+    <string name="offline_settings_never_synced">Last synchronized: never</string>
+    <string name="offline_settings_network_online">Network: online</string>
+    <string name="offline_settings_network_offline">Network: offline</string>
+    <string name="donation_save_draft">Save draft</string>
+    <string name="donation_draft_saved">Draft saved on this device.</string>
+    <string name="donation_restore_draft">Restore draft</string>
 </resources>

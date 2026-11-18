@@ -26,22 +26,28 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 @Composable
-fun RequestStatusChip(status: DonationRequestStatus) {
-    val colors = when (status) {
-        DonationRequestStatus.PENDING -> MaterialTheme.colorScheme.tertiaryContainer to
+fun RequestStatusChip(status: DonationRequestStatus, syncPending: Boolean = false) {
+    val colors = when {
+        syncPending -> MaterialTheme.colorScheme.tertiaryContainer to
             MaterialTheme.colorScheme.onTertiaryContainer
-        DonationRequestStatus.APPROVED,
-        DonationRequestStatus.PICKUP_SCHEDULED -> MaterialTheme.colorScheme.secondaryContainer to
+        status == DonationRequestStatus.PENDING -> MaterialTheme.colorScheme.tertiaryContainer to
+            MaterialTheme.colorScheme.onTertiaryContainer
+        status == DonationRequestStatus.APPROVED ||
+            status == DonationRequestStatus.PICKUP_SCHEDULED -> MaterialTheme.colorScheme.secondaryContainer to
             MaterialTheme.colorScheme.onSecondaryContainer
-        DonationRequestStatus.COLLECTED,
-        DonationRequestStatus.COMPLETED,
-        DonationRequestStatus.DISTRIBUTED -> MaterialTheme.colorScheme.primaryContainer to
+        status == DonationRequestStatus.COLLECTED ||
+            status == DonationRequestStatus.COMPLETED ||
+            status == DonationRequestStatus.DISTRIBUTED -> MaterialTheme.colorScheme.primaryContainer to
             MaterialTheme.colorScheme.onPrimaryContainer
         else -> MaterialTheme.colorScheme.errorContainer to
             MaterialTheme.colorScheme.onErrorContainer
     }
     StatusChip(
-        label = requestStatusLabel(status),
+        label = if (syncPending) {
+            stringResource(R.string.request_status_pending_sync)
+        } else {
+            requestStatusLabel(status)
+        },
         containerColor = colors.first,
         contentColor = colors.second
     )
@@ -101,7 +107,7 @@ fun RequestCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                RequestStatusChip(status = request.status)
+                RequestStatusChip(status = request.status, syncPending = request.syncPending)
             }
             Spacer(modifier = Modifier.height(Spacing.sm))
             Row(

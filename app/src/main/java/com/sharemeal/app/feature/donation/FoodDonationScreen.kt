@@ -534,6 +534,36 @@ fun FoodDonationScreen(
                 )
             }
             item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.md)
+                ) {
+                    OutlinedButton(
+                        onClick = viewModel::saveDraft,
+                        modifier = Modifier.weight(1f),
+                        enabled = !state.isPublishing
+                    ) {
+                        Text(text = stringResource(R.string.donation_save_draft))
+                    }
+                    OutlinedButton(
+                        onClick = viewModel::restoreDraft,
+                        modifier = Modifier.weight(1f),
+                        enabled = !state.isPublishing
+                    ) {
+                        Text(text = stringResource(R.string.donation_restore_draft))
+                    }
+                }
+            }
+            item {
+                state.draftMessageRes?.let { messageRes ->
+                    Text(
+                        text = stringResource(messageRes),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+            item {
                 ShareMealButton(
                     text = stringResource(R.string.donation_publish),
                     onClick = viewModel::publishDonation,

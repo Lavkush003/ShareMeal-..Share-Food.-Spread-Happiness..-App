@@ -183,7 +183,10 @@ private fun RequestDetailContent(
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.weight(1f)
                         )
-                        RequestStatusChip(status = request.status)
+                        RequestStatusChip(
+                            status = request.status,
+                            syncPending = request.syncPending
+                        )
                     }
                     Spacer(modifier = Modifier.height(Spacing.sm))
                     Text(

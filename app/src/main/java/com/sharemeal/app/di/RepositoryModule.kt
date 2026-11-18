@@ -20,6 +20,8 @@ import com.sharemeal.app.data.request.UnavailableDonationRequestRepository
 import com.sharemeal.app.data.user.MockUserRepository
 import com.sharemeal.app.data.user.UnavailableUserRepository
 import com.sharemeal.app.domain.repository.AuthenticationRepository
+import com.sharemeal.app.data.offline.RoomDonationDraftRepository
+import com.sharemeal.app.domain.repository.DonationDraftRepository
 import com.sharemeal.app.domain.repository.DonationRepository
 import com.sharemeal.app.domain.repository.DonationRequestRepository
 import com.sharemeal.app.domain.repository.NotificationRepository
@@ -53,6 +55,12 @@ abstract class RepositoryModule {
     abstract fun bindImageRepository(
         implementation: LocalPreviewImageRepository
     ): ImageRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindDonationDraftRepository(
+        implementation: RoomDonationDraftRepository
+    ): DonationDraftRepository
 }
 
 @Module
@@ -71,17 +79,17 @@ object RepositoryProviderModule {
     @Singleton
     fun provideUserRepository(
         appConfig: AppConfig,
-        mock: MockUserRepository,
+        queued: com.sharemeal.app.data.offline.QueuedUserRepository,
         unavailable: UnavailableUserRepository
-    ): UserRepository = if (appConfig.isMockMode) mock else unavailable
+    ): UserRepository = if (appConfig.isMockMode) queued else unavailable
 
     @Provides
     @Singleton
     fun provideDonationRepository(
         appConfig: AppConfig,
-        mock: MockDonationRepository,
+        queued: com.sharemeal.app.data.offline.QueuedDonationRepository,
         unavailable: UnavailableDonationRepository
-    ): DonationRepository = if (appConfig.isMockMode) mock else unavailable
+    ): DonationRepository = if (appConfig.isMockMode) queued else unavailable
 
     @Provides
     @Singleton
@@ -95,25 +103,26 @@ object RepositoryProviderModule {
     @Singleton
     fun provideFoodDiscoveryRepository(
         appConfig: AppConfig,
-        mock: com.sharemeal.app.data.discovery.MockFoodDiscoveryRepository,
-        unavailable: com.sharemeal.app.data.discovery.UnavailableFoodDiscoveryRepository
-    ): com.sharemeal.app.domain.repository.FoodDiscoveryRepository = if (appConfig.isMockMode) mock else unavailable
+        networkAware: com.sharemeal.app.data.offline.NetworkAwareFoodDiscoveryRepository,
+        cached: com.sharemeal.app.data.offline.CachedFoodDiscoveryRepository
+    ): com.sharemeal.app.domain.repository.FoodDiscoveryRepository =
+        if (appConfig.isMockMode) networkAware else cached
 
     @Provides
     @Singleton
     fun provideDonationRequestRepository(
         appConfig: AppConfig,
-        mock: MockDonationRequestRepository,
+        queued: com.sharemeal.app.data.offline.QueuedDonationRequestRepository,
         unavailable: UnavailableDonationRequestRepository
-    ): DonationRequestRepository = if (appConfig.isMockMode) mock else unavailable
+    ): DonationRequestRepository = if (appConfig.isMockMode) queued else unavailable
 
     @Provides
     @Singleton
     fun providePickupRepository(
         appConfig: AppConfig,
-        mock: MockPickupRepository,
+        queued: com.sharemeal.app.data.offline.QueuedPickupRepository,
         unavailable: UnavailablePickupRepository
-    ): PickupRepository = if (appConfig.isMockMode) mock else unavailable
+    ): PickupRepository = if (appConfig.isMockMode) queued else unavailable
 
     @Provides
     @Singleton

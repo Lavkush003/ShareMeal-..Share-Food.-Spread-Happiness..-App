@@ -33,6 +33,8 @@ import com.sharemeal.app.feature.discovery.DonationDetailScreen
 import com.sharemeal.app.feature.discovery.FoodDiscoveryScreen
 import com.sharemeal.app.feature.donation.FoodDonationScreen
 import com.sharemeal.app.feature.notifications.NotificationsScreen
+import com.sharemeal.app.feature.offline.OfflineSettingsScreen
+import com.sharemeal.app.feature.offline.SyncStatusBanner
 import com.sharemeal.app.feature.onboarding.OnboardingScreen
 import com.sharemeal.app.feature.pickup.PickupActionScreen
 import com.sharemeal.app.feature.pickup.PickupActionType
@@ -468,14 +470,18 @@ fun ShareMealApp(
                         requiredRole = null,
                         navController = navController
                     ) {
-                        FeaturePlaceholderScreen(
-                            title = stringResource(R.string.placeholder_settings_title),
-                            description = stringResource(R.string.placeholder_settings_body),
+                        OfflineSettingsScreen(
                             onBack = { navController.popBackStack() }
                         )
                     }
                 }
             }
+
+            SyncStatusBanner(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = Spacing.sm)
+            )
 
             if (isMockMode) {
                 MockModeBanner(

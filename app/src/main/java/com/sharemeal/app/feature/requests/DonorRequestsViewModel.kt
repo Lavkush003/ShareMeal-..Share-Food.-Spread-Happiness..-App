@@ -61,7 +61,8 @@ class DonorRequestsViewModel @Inject constructor(
 
     fun approve(requestId: String, approvedQuantity: Int, pickupTime: Long?) = mutate(
         action = { requestRepository.approveRequest(requestId, approvedQuantity, pickupTime) },
-        successMessage = "Request approved. Quantity has been allocated."
+        successMessage = "Request approved. Quantity has been allocated.",
+        pendingMessage = "Approval queued for synchronization. Server confirmation is pending."
     )
 
     fun reject(requestId: String, reason: String?) = mutate(
@@ -85,12 +86,22 @@ class DonorRequestsViewModel @Inject constructor(
 
     private fun mutate(
         action: suspend () -> AppResult<com.sharemeal.app.domain.model.DonationRequest>,
-        successMessage: String
+        successMessage: String,
+        pendingMessage: String? = null
     ) {
         viewModelScope.launch {
             _uiState.update { it.copy(errorText = null, infoText = null) }
             when (val result = action()) {
-                is AppResult.Success -> _uiState.update { it.copy(infoText = successMessage) }
+                is AppResult.Success -> _uiState.update {
+                    it.copy(
+                        infoText = if (result.data.syncPending && pendingMessage != null) {
+                            pendingMessage
+                        } else {
+                            successMessage
+                        }
+                    )
+                }
+
                 is AppResult.Failure -> _uiState.update { it.copy(errorText = result.error.message) }
             }
         }

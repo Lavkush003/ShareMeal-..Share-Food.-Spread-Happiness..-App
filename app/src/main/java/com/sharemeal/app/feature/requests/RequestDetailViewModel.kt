@@ -90,7 +90,8 @@ class RequestDetailViewModel @Inject constructor(
     fun approve(approvedQuantity: Int, pickupTime: Long?) = mutate(
         action = { requestId?.let { requestRepository.approveRequest(it, approvedQuantity, pickupTime) }
             ?: missingRequest() },
-        successMessage = "Request approved and quantity allocated."
+        successMessage = "Request approved and quantity allocated.",
+        pendingMessage = "Approval queued for synchronization. Server confirmation is pending."
     )
 
     fun reject(reason: String?) = mutate(
@@ -128,13 +129,19 @@ class RequestDetailViewModel @Inject constructor(
 
     private fun mutate(
         action: suspend () -> AppResult<DonationRequest>,
-        successMessage: String
+        successMessage: String,
+        pendingMessage: String? = null
     ) {
         viewModelScope.launch {
             _uiState.update { it.copy(errorText = null, infoText = null) }
             when (val result = action()) {
                 is AppResult.Success -> {
-                    _uiState.update { it.copy(infoText = successMessage) }
+                    val message = if (result.data.syncPending && pendingMessage != null) {
+                        pendingMessage
+                    } else {
+                        successMessage
+                    }
+                    _uiState.update { it.copy(infoText = message) }
                     load()
                 }
                 is AppResult.Failure -> _uiState.update { it.copy(errorText = result.error.message) }
