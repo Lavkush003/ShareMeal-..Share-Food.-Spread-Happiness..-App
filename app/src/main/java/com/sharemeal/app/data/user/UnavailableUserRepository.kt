@@ -19,7 +19,14 @@ class UnavailableUserRepository @Inject constructor() : UserRepository {
 
     override suspend fun getCurrentUser(): AppResult<User> = backendUnavailable()
 
+    override suspend fun getUser(userId: String): AppResult<User> = backendUnavailable()
+
     override suspend fun updateProfile(update: ProfileUpdate): AppResult<User> = backendUnavailable()
+
+    override suspend fun setNgoVerificationStatus(
+        userId: String,
+        status: com.sharemeal.app.domain.model.NgoVerificationStatus
+    ): AppResult<User> = backendUnavailable()
 
     private fun <T> backendUnavailable(): AppResult<T> = AppResult.Failure(
         AppError.Unknown("Profile backend is not configured for this build.")

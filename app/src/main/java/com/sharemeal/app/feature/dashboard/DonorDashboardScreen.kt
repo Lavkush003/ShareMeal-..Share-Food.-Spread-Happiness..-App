@@ -32,6 +32,7 @@ import com.sharemeal.app.core.ui.components.WelcomeBanner
 fun DonorDashboardScreen(
     onAddDonation: () -> Unit,
     onMyDonations: () -> Unit,
+    onRequests: () -> Unit,
     onHistory: () -> Unit,
     onNotifications: () -> Unit,
     onProfile: () -> Unit,
@@ -50,6 +51,12 @@ fun DonorDashboardScreen(
             descriptionRes = R.string.donor_action_donations_body,
             icon = Icons.Rounded.Restaurant,
             onClick = onMyDonations
+        ),
+        DashboardAction(
+            titleRes = R.string.donor_action_requests_title,
+            descriptionRes = R.string.donor_action_requests_body,
+            icon = Icons.Rounded.Restaurant,
+            onClick = onRequests
         ),
         DashboardAction(
             titleRes = R.string.donor_action_history_title,

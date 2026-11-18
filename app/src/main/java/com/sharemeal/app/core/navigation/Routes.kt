@@ -13,6 +13,7 @@ object Routes {
     const val DONOR_DASHBOARD = "donor/dashboard"
     const val DONOR_ADD_DONATION = "donor/donations/add"
     const val DONOR_DONATIONS = "donor/donations"
+    const val DONOR_REQUESTS = "donor/requests"
     const val DONOR_HISTORY = "donor/history"
 
     const val NGO_DASHBOARD = "ngo/dashboard"
@@ -21,7 +22,20 @@ object Routes {
     const val NGO_PICKUPS = "ngo/pickups"
     const val NGO_HISTORY = "ngo/history"
 
+    const val ARG_DONATION_ID = "donationId"
+    const val DONATION_DETAIL = "ngo/discovery/{$ARG_DONATION_ID}"
+
+    const val ARG_REQUEST_ID = "requestId"
+    const val REQUEST_DETAIL = "request/{$ARG_REQUEST_ID}"
+    const val REQUEST_HISTORY = "request/history"
+
     const val NOTIFICATIONS = "notifications"
     const val PROFILE = "profile"
     const val SETTINGS = "settings"
+
+    fun donationDetailRoute(donationId: String): String =
+        "ngo/discovery/$donationId"
+
+    fun requestDetailRoute(requestId: String): String =
+        "request/$requestId"
 }

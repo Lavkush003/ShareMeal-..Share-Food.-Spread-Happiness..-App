@@ -36,6 +36,7 @@ class MockAccountSeeder @Inject constructor(
     private fun createDemoAccounts(): List<MockAccountRecord> {
         val donorCredential = newCredential()
         val ngoCredential = newCredential()
+        val verifiedNgoCredential = newCredential()
         return listOf(
             MockAccountRecord(
                 user = demoDonor(),
@@ -46,6 +47,11 @@ class MockAccountSeeder @Inject constructor(
                 user = demoNgo(),
                 passwordSalt = ngoCredential.salt,
                 passwordHash = ngoCredential.hash
+            ),
+            MockAccountRecord(
+                user = verifiedTestNgo(),
+                passwordSalt = verifiedNgoCredential.salt,
+                passwordHash = verifiedNgoCredential.hash
             )
         )
     }
@@ -98,6 +104,34 @@ class MockAccountSeeder @Inject constructor(
             estimatedDistributionCapacity = "200 meals/day",
             verificationDocumentInfo = "Mock FSSAI registration and trust certificate",
             verificationStatus = NgoVerificationStatus.PENDING
+        ),
+        createdAt = DemoCreatedAt
+    )
+
+    /**
+     * Explicitly labelled development-only account. VERIFIED here is a mock test
+     * state and must never be interpreted as administrator approval.
+     */
+    private fun verifiedTestNgo(): User = User(
+        id = "mock-ngo-verified-dev",
+        email = "ngo-verified@sharemeal.dev",
+        mobile = "9876543215",
+        role = UserRole.NGO,
+        displayName = "TEST - Verified NGO (Dev Only)",
+        ngoProfile = NgoProfile(
+            ngoName = "TEST - Verified NGO (Dev Only)",
+            registrationNumber = "MOCK-TEST-VERIFIED-2026",
+            contactPersonName = "Dev Test Contact",
+            address = Address(
+                line1 = "1 Test Suite, Development Block",
+                city = "Bengaluru",
+                state = "Karnataka",
+                pinCode = "560001"
+            ),
+            operatingArea = "Bengaluru (mock)",
+            estimatedDistributionCapacity = "MOCK - 100 meals/day",
+            verificationDocumentInfo = "MOCK TEST STATE - not administrator approved",
+            verificationStatus = NgoVerificationStatus.VERIFIED
         ),
         createdAt = DemoCreatedAt
     )

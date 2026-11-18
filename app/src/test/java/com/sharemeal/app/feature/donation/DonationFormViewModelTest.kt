@@ -46,7 +46,7 @@ class DonationFormViewModelTest {
                 R.string.donation_error_preparation_date_required,
                 errors[DonationField.PREPARATION_DATE]
             )
-            assertTrue(repository.donations.value.isEmpty())
+            assertTrue(repository.donations.value.none { it.title == "Fresh vegetable curry" })
         }
 
     @Test
@@ -58,6 +58,7 @@ class DonationFormViewModelTest {
                 LocalPreviewImageRepository()
             )
             fillValidForm(viewModel)
+            val initialCount = repository.donations.value.size
 
             viewModel.events.test {
                 viewModel.publishDonation()
@@ -72,8 +73,11 @@ class DonationFormViewModelTest {
             }
 
             assertTrue(viewModel.uiState.value.fieldErrors.isEmpty())
-            assertEquals(1, repository.donations.value.size)
-            assertEquals("Fresh vegetable curry", repository.donations.value.first().title)
+            assertEquals(initialCount + 1, repository.donations.value.size)
+            assertEquals(
+                "Fresh vegetable curry",
+                repository.donations.value.first { it.title == "Fresh vegetable curry" }.title
+            )
         }
 
     @Test

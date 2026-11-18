@@ -46,6 +46,14 @@ class MockUserRepository @Inject constructor(
         AppResult.Success(account.user)
     }
 
+    override suspend fun getUser(userId: String): AppResult<User> = safely {
+        seeder.ensureSeeded()
+        val account = accountLock.mutex.withLock {
+            accountStore.load().firstOrNull { it.user.id == userId }
+        } ?: return@safely AppResult.Failure(AppError.NotFound("User not found."))
+        AppResult.Success(account.user)
+    }
+
     override suspend fun updateProfile(update: ProfileUpdate): AppResult<User> = safely {
         val session = sessionManager.session.value
             ?: return@safely AppResult.Failure(AppError.Unauthorized())
@@ -65,6 +73,36 @@ class MockUserRepository @Inject constructor(
             }
             accountStore.save(updatedAccounts)
             _currentUser.value = updatedUser
+            AppResult.Success(updatedUser)
+        }
+    }
+
+    override suspend fun setNgoVerificationStatus(
+        userId: String,
+        status: com.sharemeal.app.domain.model.NgoVerificationStatus
+    ): AppResult<User> = safely {
+        seeder.ensureSeeded()
+        accountLock.mutex.withLock {
+            val accounts = accountStore.load()
+            val index = accounts.indexOfFirst { it.user.id == userId }
+            if (index < 0) {
+                return@withLock AppResult.Failure(AppError.NotFound("Profile not found."))
+            }
+
+            val record = accounts[index]
+            val ngoProfile = record.user.ngoProfile
+                ?: return@withLock AppResult.Failure(AppError.NotFound("User is not an NGO."))
+
+            val updatedUser = record.user.copy(
+                ngoProfile = ngoProfile.copy(verificationStatus = status)
+            )
+            val updatedAccounts = accounts.toMutableList().apply {
+                this[index] = record.copy(user = updatedUser)
+            }
+            accountStore.save(updatedAccounts)
+            if (_currentUser.value?.id == userId) {
+                _currentUser.value = updatedUser
+            }
             AppResult.Success(updatedUser)
         }
     }

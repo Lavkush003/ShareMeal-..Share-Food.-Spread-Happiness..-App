@@ -30,5 +30,6 @@ data class FoodDonation(
     val contactPhone: String,
     val specialInstructions: String?,
     val status: DonationStatus = DonationStatus.PUBLISHED,
+    val remainingQuantity: Int = quantity,
     val createdAt: Long
 )

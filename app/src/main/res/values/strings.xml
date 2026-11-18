@@ -40,6 +40,7 @@
     <string name="ngo_action_discover_title">Discover food</string>
     <string name="ngo_action_discover_body">Find nearby surplus food available for collection.</string>
     <string name="ngo_action_requests_title">My requests</string>
+    <string name="ngo_requests_title">My Requests</string>
     <string name="ngo_action_requests_body">Track approvals and quantity allocation.</string>
     <string name="ngo_action_pickups_title">Pickups and distribution</string>
     <string name="ngo_action_pickups_body">Schedule collection and confirm distribution.</string>
@@ -294,4 +295,155 @@
     <string name="donation_unit_litres">Litres</string>
     <string name="donation_unit_packets">Packets</string>
     <string name="donation_unit_other">Other</string>
+
+    <!-- Phase 4: NGO Dashboard, Discovery, & Details -->
+    <string name="ngo_stats_available">Available Nearby</string>
+    <string name="ngo_stats_pending">Pending Requests</string>
+    <string name="ngo_stats_approved">Approved Collections</string>
+    <string name="ngo_stats_pickups">Upcoming Pickups</string>
+    <string name="ngo_stats_completed">Completed Distributions</string>
+    <string name="ngo_stats_total_meals">Total Meals Collected</string>
+    <string name="ngo_section_overview">Dashboard Overview</string>
+    <string name="ngo_section_recent_activities">Recent Activity</string>
+    <string name="ngo_no_activities">No recent activities to show.</string>
+    <string name="ngo_test_mode_toggle">Test Mode: Toggle NGO Verification</string>
+    <string name="ngo_dev_verified_notice">NGO status set to VERIFIED for testing.</string>
+    <string name="ngo_dev_pending_notice">NGO status set to PENDING for testing.</string>
+
+    <string name="discovery_screen_title">Food Discovery</string>
+    <string name="discovery_search_hint">Search food name, donor, or category…</string>
+    <string name="discovery_filter_all_categories">All Categories</string>
+    <string name="discovery_filter_all_classifications">All Types</string>
+    <string name="discovery_filter_veg_only">Vegetarian Only</string>
+    <string name="discovery_filter_non_veg_only">Non-Vegetarian Only</string>
+    <string name="discovery_filter_quantity_min">Min Quantity: %1$d</string>
+    <string name="discovery_filter_distance_max">Max Distance: %1$.1f km</string>
+    <string name="discovery_filter_deadline_window">Expiring within %1$d hours</string>
+    <string name="discovery_filter_title">Filters &amp; Sorting</string>
+    <string name="discovery_sort_by">Sort by</string>
+    <string name="discovery_sort_nearest">Nearest location</string>
+    <string name="discovery_sort_earliest_deadline">Earliest pickup deadline</string>
+    <string name="discovery_sort_newest">Newest listing</string>
+    <string name="discovery_clear_filters">Clear all filters</string>
+    <string name="discovery_apply_filters">Apply filters</string>
+    <string name="discovery_empty_title">No surplus food found</string>
+    <string name="discovery_empty_body">There are no donations matching your current search criteria. Try clearing filters or searching for another term.</string>
+    <string name="discovery_refresh">Refresh listings</string>
+    <string name="discovery_distance_format">%1$.1f km away</string>
+    <string name="discovery_prepared_time_format">Prepared %1$s</string>
+    <string name="discovery_deadline_format">Pickup deadline: %1$s</string>
+    <string name="discovery_quantity_format">%1$d %2$s available</string>
+
+    <string name="donation_detail_title">Donation Details</string>
+    <string name="donation_detail_request_action">Request Donation</string>
+    <string name="donation_detail_request_dialog_title">Request Food Collection</string>
+    <string name="donation_detail_request_dialog_body">Specify the quantity your NGO can collect from this donation listing:</string>
+    <string name="donation_detail_request_quantity">Requested quantity</string>
+    <string name="donation_detail_request_notes">Notes for donor (e.g. vehicle details, expected pickup time)</string>
+    <string name="donation_detail_request_submit">Submit Request</string>
+    <string name="donation_detail_request_success">Donation request submitted successfully!</string>
+    <string name="donation_detail_privacy_note">Privacy Protected: Exact pickup address and donor contact phone will be revealed once your request is approved.</string>
+
+    <!-- Phase 5: Donation requests and approvals -->
+    <string name="request_status_pending">Pending</string>
+    <string name="request_status_approved">Approved</string>
+    <string name="request_status_rejected">Rejected</string>
+    <string name="request_status_cancelled">Cancelled</string>
+    <string name="request_status_pickup_scheduled">Pickup scheduled</string>
+    <string name="request_status_collected">Collected</string>
+    <string name="request_status_completed">Completed</string>
+    <string name="request_status_expired">Expired</string>
+
+    <string name="request_untitled_donation">Food donation</string>
+    <string name="request_card_subtitle">%1$s · %2$s</string>
+    <string name="request_card_requested">Requested: %1$d</string>
+    <string name="request_card_approved">Allocated: %1$d</string>
+    <string name="request_card_pickup">Expected pickup: %1$s</string>
+
+    <string name="request_tab_active">Active (%1$d)</string>
+    <string name="request_tab_history">History (%1$d)</string>
+    <string name="request_empty_title">No requests here yet</string>
+    <string name="request_empty_body">Browse available food to submit your first collection request.</string>
+    <string name="request_empty_action">Discover food</string>
+
+    <string name="request_action_cancel">Cancel request</string>
+    <string name="request_action_confirm_collection">Confirm collection</string>
+    <string name="request_action_find_more">Find more food</string>
+    <string name="request_action_approve">Approve request</string>
+    <string name="request_action_reject">Reject request</string>
+    <string name="request_action_complete">Mark distribution complete</string>
+    <string name="request_action_view_history">View request history</string>
+    <string name="request_action_schedule_pickup">Schedule pickup</string>
+
+    <string name="request_approve_dialog_title">Approve donation request</string>
+    <string name="request_approve_dialog_body">%1$s was requested by %2$s. Confirm how much you can allocate.</string>
+    <string name="request_approve_quantity">Approved quantity</string>
+    <string name="request_approve_quantity_error">Enter a whole number between 1 and %1$d</string>
+    <string name="request_approve_confirm">Approve</string>
+    <string name="request_pickup_time_label">Pickup: %1$s</string>
+    <string name="request_schedule_dialog_title">Schedule pickup</string>
+    <string name="request_schedule_dialog_body">Choose the date and time the NGO should collect this donation.</string>
+    <string name="request_schedule_confirm">Schedule</string>
+    <string name="request_reject_dialog_title">Reject donation request</string>
+    <string name="request_reject_dialog_body">%1$s will be notified that their request was not approved.</string>
+    <string name="request_reject_reason">Reason (optional)</string>
+    <string name="request_reject_confirm">Reject</string>
+
+    <string name="request_detail_title">Request details</string>
+    <string name="request_detail_loading">Loading request…</string>
+    <string name="request_detail_reference">Reference: %1$s</string>
+    <string name="request_section_quantities">Quantity breakdown</string>
+    <string name="request_detail_requested">Requested</string>
+    <string name="request_detail_approved">Approved</string>
+    <string name="request_detail_people">People to serve</string>
+    <string name="request_detail_total">Total quantity</string>
+    <string name="request_detail_allocated">Allocated</string>
+    <string name="request_detail_remaining">Remaining</string>
+    <string name="request_detail_collected">Collected</string>
+    <string name="request_detail_uncollected">Uncollected</string>
+    <string name="request_section_timing">Timing</string>
+    <string name="request_detail_submitted">Submitted</string>
+    <string name="request_detail_expected_pickup">Expected pickup</string>
+    <string name="request_detail_scheduled_pickup">Scheduled pickup</string>
+    <string name="request_detail_completed">Completed</string>
+    <string name="request_section_ngo">Requesting NGO</string>
+    <string name="request_detail_ngo">NGO name</string>
+    <string name="request_detail_registration">Registration number</string>
+    <string name="request_detail_contact">Contact person</string>
+    <string name="request_detail_operating_area">Operating area</string>
+    <string name="request_detail_capacity">Distribution capacity</string>
+    <string name="request_detail_verification">Verification status</string>
+    <string name="request_section_message">Message from NGO</string>
+    <string name="request_detail_rejection_reason">Rejection reason: %1$s</string>
+    <string name="request_section_pickup">Pickup information</string>
+    <string name="request_detail_address">Pickup address</string>
+    <string name="request_detail_city">Location</string>
+    <string name="request_detail_phone">Contact phone</string>
+    <string name="request_detail_instructions">Instructions</string>
+    <string name="request_detail_privacy_notice">Exact pickup address and donor contact details are hidden until the request is approved by an authorized donor.</string>
+
+    <string name="donor_requests_title">Donation requests</string>
+    <string name="donor_requests_pending">Pending (%1$d)</string>
+    <string name="donor_requests_active">Active (%1$d)</string>
+    <string name="donor_requests_empty_title">No incoming requests</string>
+    <string name="donor_requests_empty_body">When an NGO requests one of your donations, it will appear here for review.</string>
+
+    <string name="request_history_title">Request history</string>
+    <string name="request_history_empty_title">No request history</string>
+    <string name="request_history_empty_body">Completed, rejected and cancelled requests will be listed here.</string>
+
+    <string name="notifications_title">Notifications</string>
+    <string name="notifications_mark_all">Mark all as read</string>
+    <string name="notifications_empty_title">No notifications yet</string>
+    <string name="notifications_empty_body">Request updates from this device will appear here. Remote push is not configured.</string>
+
+    <string name="donor_action_requests_title">Donation requests</string>
+    <string name="donor_action_requests_body">Review NGO requests, approve allocations, and schedule pickups.</string>
+    <string name="donation_detail_request_people">Number of people to serve</string>
+    <string name="donation_detail_request_pickup">Expected pickup date and time</string>
+    <string name="donation_detail_request_error_quantity">Enter a quantity between 1 and %1$d</string>
+    <string name="donation_detail_request_error_people">Enter the number of people to serve.</string>
+    <string name="donation_detail_request_error_pickup">Select an expected pickup date and time.</string>
+    <string name="donation_detail_available_quantity">%1$d %2$s currently available</string>
+    <string name="ngo_dev_test_account_note">Mock test control only - not an administrator approval.</string>
 </resources>

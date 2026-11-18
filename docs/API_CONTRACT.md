@@ -341,7 +341,8 @@ Requires a VERIFIED NGO.
 ```json
 {
   "requestedQuantity": 60,
-  "estimatedPickupAt": "2026-11-05T22:00:00Z",
+  "peopleToServe": 60,
+  "expectedPickupAt": "2026-11-05T22:00:00Z",
   "note": "Volunteer with a refrigerated van."
 }
 ```
@@ -350,9 +351,10 @@ Server rules:
 
 - Donation must be PUBLISHED or PARTIALLY_ALLOCATED.
 - Current time must be before `collectionDeadline`.
-- `requestedQuantity` must be positive and not exceed remaining quantity.
+- `requestedQuantity` and `peopleToServe` must be positive.
+- `requestedQuantity` must not exceed remaining quantity at submission time.
 - One active request per NGO per donation.
-- Allocation is performed with an atomic conditional update inside a MongoDB transaction.
+- A pending request does not reserve or decrement quantity. Reservation occurs only on approval.
 - Duplicate `Idempotency-Key` returns the original request.
 
 Response `201`:
@@ -363,7 +365,9 @@ Response `201`:
   "donationId": "don_123",
   "status": "PENDING",
   "requestedQuantity": 60,
-  "estimatedPickupAt": "2026-11-05T22:00:00Z",
+  "approvedQuantity": null,
+  "peopleToServe": 60,
+  "expectedPickupAt": "2026-11-05T22:00:00Z",
   "createdAt": "2026-11-05T21:10:00Z"
 }
 ```
@@ -561,22 +565,37 @@ Indexes:
 
 ## 14. Transaction-Safe Allocation
 
-The backend must not rely on client-side checks.
+The backend must not rely on client-side checks. A pending request is only an expression of interest; capacity is reserved when the donor approves it. The request transition, quantity decrement, donation status update, notification and audit record must all succeed or fail together in one MongoDB transaction.
 
 ```js
-const donation = await Donation.findOneAndUpdate(
-  {
-    _id: donationId,
-    status: { $in: ["PUBLISHED", "PARTIALLY_ALLOCATED"] },
-    collectionDeadline: { $gt: new Date() },
-    remainingQuantity: { $gte: requestedQuantity }
-  },
-  { $inc: { remainingQuantity: -requestedQuantity }, $inc: { version: 1 } },
-  { new: true, session }
-);
+const session = await mongoose.startSession();
+await session.withTransaction(async () => {
+  const request = await DonationRequest.findOneAndUpdate(
+    { _id: requestId, status: "PENDING" },
+    { $set: { status: "APPROVED", approvedQuantity } },
+    { new: true, session }
+  );
+  if (!request) throw conflict("REQUEST_NOT_PENDING");
+
+  const donation = await Donation.findOneAndUpdate(
+    {
+      _id: request.donationId,
+      status: { $in: ["PUBLISHED", "PARTIALLY_ALLOCATED"] },
+      collectionDeadline: { $gt: new Date() },
+      remainingQuantity: { $gte: approvedQuantity }
+    },
+    { $inc: { remainingQuantity: -approvedQuantity, version: 1 } },
+    { new: true, session }
+  );
+  if (!donation) throw conflict("QUANTITY_EXCEEDED");
+
+  await updateDonationStatusFromRemaining(donation, session);
+  await Notification.create([/* request approved payload */], { session });
+  await AuditLog.create([/* allocation event */], { session });
+});
 ```
 
-If `donation` is null, return `409 QUANTITY_EXCEEDED` or `409 DONATION_NOT_AVAILABLE`. Create the request and audit record inside the same transaction. On rejection or cancellation before collection, return quantity atomically.
+On rejection before approval no quantity changes. On cancellation of an approved or scheduled request before collection, return the approved quantity atomically. Local debug mocks can only provide atomicity inside one Android process; they are not a cross-device reservation.
 
 ## 15. Future AI Extensions
 

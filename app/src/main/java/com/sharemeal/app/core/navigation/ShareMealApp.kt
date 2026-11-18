@@ -29,9 +29,16 @@ import com.sharemeal.app.feature.authentication.RoleSelectionScreen
 import com.sharemeal.app.feature.authentication.WelcomeScreen
 import com.sharemeal.app.feature.dashboard.DonorDashboardScreen
 import com.sharemeal.app.feature.dashboard.NgoDashboardScreen
+import com.sharemeal.app.feature.discovery.DonationDetailScreen
+import com.sharemeal.app.feature.discovery.FoodDiscoveryScreen
 import com.sharemeal.app.feature.donation.FoodDonationScreen
+import com.sharemeal.app.feature.notifications.NotificationsScreen
 import com.sharemeal.app.feature.onboarding.OnboardingScreen
 import com.sharemeal.app.feature.profile.ProfileScreen
+import com.sharemeal.app.feature.requests.DonorRequestsScreen
+import com.sharemeal.app.feature.requests.NgoRequestsScreen
+import com.sharemeal.app.feature.requests.RequestDetailScreen
+import com.sharemeal.app.feature.requests.RequestHistoryScreen
 import com.sharemeal.app.feature.registration.DonorRegistrationScreen
 import com.sharemeal.app.feature.registration.NgoRegistrationScreen
 import com.sharemeal.app.feature.splash.SplashDestination
@@ -148,6 +155,7 @@ fun ShareMealApp(
                         DonorDashboardScreen(
                             onAddDonation = { navController.navigate(Routes.DONOR_ADD_DONATION) },
                             onMyDonations = { navController.navigate(Routes.DONOR_DONATIONS) },
+                            onRequests = { navController.navigate(Routes.DONOR_REQUESTS) },
                             onHistory = { navController.navigate(Routes.DONOR_HISTORY) },
                             onNotifications = { navController.navigate(Routes.NOTIFICATIONS) },
                             onProfile = { navController.navigate(Routes.PROFILE) },
@@ -198,15 +206,43 @@ fun ShareMealApp(
                     }
                 }
 
+                composable(Routes.DONOR_REQUESTS) {
+                    SessionRoute(
+                        requiredRole = UserRole.DONOR,
+                        navController = navController
+                    ) {
+                        DonorRequestsScreen(
+                            onBack = { navController.popBackStack() },
+                            onRequestSelected = {
+                                navController.navigate(Routes.requestDetailRoute(it))
+                            },
+                            onHistory = { navController.navigate(Routes.REQUEST_HISTORY) }
+                        )
+                    }
+                }
+
                 composable(Routes.NGO_DISCOVERY) {
                     SessionRoute(
                         requiredRole = UserRole.NGO,
                         navController = navController
                     ) {
-                        FeaturePlaceholderScreen(
-                            title = stringResource(R.string.placeholder_discovery_title),
-                            description = stringResource(R.string.placeholder_discovery_body),
-                            onBack = { navController.popBackStack() }
+                        FoodDiscoveryScreen(
+                            onBack = { navController.popBackStack() },
+                            onDonationSelected = {
+                                navController.navigate(Routes.donationDetailRoute(it))
+                            }
+                        )
+                    }
+                }
+
+                composable(Routes.DONATION_DETAIL) {
+                    SessionRoute(
+                        requiredRole = UserRole.NGO,
+                        navController = navController
+                    ) {
+                        DonationDetailScreen(
+                            onBack = { navController.popBackStack() },
+                            onViewRequests = { navController.navigate(Routes.NGO_REQUESTS) }
                         )
                     }
                 }
@@ -216,10 +252,12 @@ fun ShareMealApp(
                         requiredRole = UserRole.NGO,
                         navController = navController
                     ) {
-                        FeaturePlaceholderScreen(
-                            title = stringResource(R.string.placeholder_requests_title),
-                            description = stringResource(R.string.placeholder_requests_body),
-                            onBack = { navController.popBackStack() }
+                        NgoRequestsScreen(
+                            onBack = { navController.popBackStack() },
+                            onDiscovery = { navController.navigate(Routes.NGO_DISCOVERY) },
+                            onRequestSelected = {
+                                navController.navigate(Routes.requestDetailRoute(it))
+                            }
                         )
                     }
                 }
@@ -229,10 +267,12 @@ fun ShareMealApp(
                         requiredRole = UserRole.NGO,
                         navController = navController
                     ) {
-                        FeaturePlaceholderScreen(
-                            title = stringResource(R.string.placeholder_pickups_title),
-                            description = stringResource(R.string.placeholder_pickups_body),
-                            onBack = { navController.popBackStack() }
+                        NgoRequestsScreen(
+                            onBack = { navController.popBackStack() },
+                            onDiscovery = { navController.navigate(Routes.NGO_DISCOVERY) },
+                            onRequestSelected = {
+                                navController.navigate(Routes.requestDetailRoute(it))
+                            }
                         )
                     }
                 }
@@ -242,7 +282,12 @@ fun ShareMealApp(
                         requiredRole = UserRole.DONOR,
                         navController = navController
                     ) {
-                        HistoryPlaceholderScreen(onBack = { navController.popBackStack() })
+                        RequestHistoryScreen(
+                            onBack = { navController.popBackStack() },
+                            onRequestSelected = {
+                                navController.navigate(Routes.requestDetailRoute(it))
+                            }
+                        )
                     }
                 }
 
@@ -251,7 +296,35 @@ fun ShareMealApp(
                         requiredRole = UserRole.NGO,
                         navController = navController
                     ) {
-                        HistoryPlaceholderScreen(onBack = { navController.popBackStack() })
+                        RequestHistoryScreen(
+                            onBack = { navController.popBackStack() },
+                            onRequestSelected = {
+                                navController.navigate(Routes.requestDetailRoute(it))
+                            }
+                        )
+                    }
+                }
+
+                composable(Routes.REQUEST_HISTORY) {
+                    SessionRoute(
+                        requiredRole = null,
+                        navController = navController
+                    ) {
+                        RequestHistoryScreen(
+                            onBack = { navController.popBackStack() },
+                            onRequestSelected = {
+                                navController.navigate(Routes.requestDetailRoute(it))
+                            }
+                        )
+                    }
+                }
+
+                composable(Routes.REQUEST_DETAIL) {
+                    SessionRoute(
+                        requiredRole = null,
+                        navController = navController
+                    ) {
+                        RequestDetailScreen(onBack = { navController.popBackStack() })
                     }
                 }
 
@@ -260,10 +333,11 @@ fun ShareMealApp(
                         requiredRole = null,
                         navController = navController
                     ) {
-                        FeaturePlaceholderScreen(
-                            title = stringResource(R.string.placeholder_notifications_title),
-                            description = stringResource(R.string.placeholder_notifications_body),
-                            onBack = { navController.popBackStack() }
+                        NotificationsScreen(
+                            onBack = { navController.popBackStack() },
+                            onNotificationSelected = {
+                                navController.navigate(Routes.requestDetailRoute(it))
+                            }
                         )
                     }
                 }
@@ -334,15 +408,6 @@ private fun SessionRoute(
     if (isAuthorized) {
         content()
     }
-}
-
-@Composable
-private fun HistoryPlaceholderScreen(onBack: () -> Unit) {
-    FeaturePlaceholderScreen(
-        title = stringResource(R.string.placeholder_history_title),
-        description = stringResource(R.string.placeholder_history_body),
-        onBack = onBack
-    )
 }
 
 private fun dashboardRoute(role: UserRole): String = when (role) {
