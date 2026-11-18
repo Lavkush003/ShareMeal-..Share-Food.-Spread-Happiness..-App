@@ -59,7 +59,15 @@ DonationStatus: DRAFT | PUBLISHED | PARTIALLY_ALLOCATED | FULLY_ALLOCATED |
                 CANCELLED | EXPIRED | SAFETY_HOLD
 RequestStatus: PENDING | APPROVED | REJECTED | CANCELLED | PICKUP_SCHEDULED |
                COLLECTED | DISTRIBUTED | COMPLETED | EXPIRED
-PickupStatus: SCHEDULED | IN_PROGRESS | COLLECTED | CANCELLED | FAILED
+PickupStatus: SCHEDULED | NGO_READY | DONOR_READY | READY | IN_PROGRESS |
+              COLLECTED | DISTRIBUTED | COMPLETED | CANCELLED | MISSED | FAILED
+PickupExceptionReason: MISSED_PICKUP | DONOR_UNAVAILABLE | NGO_UNAVAILABLE |
+                       VEHICLE_FAILURE | QUANTITY_MISMATCH | QUALITY_CONCERN |
+                       ADDRESS_ISSUE | SAFETY_CONCERN | OTHER
+WorkflowStage: DONATION_PUBLISHED | NGO_REQUESTED | DONOR_APPROVED |
+               PICKUP_SCHEDULED | NGO_READY | DONOR_READY | READY |
+               PICKUP_IN_PROGRESS | FOOD_COLLECTED | DISTRIBUTION_CONFIRMED |
+               COMPLETED | CANCELLED | MISSED | FAILED
 SafetyReportStatus: OPEN | UNDER_REVIEW | RESOLVED | DISMISSED
 ```
 
@@ -408,53 +416,120 @@ Optional future capability. Contract reserved.
 
 ## 9. Pickup and Distribution
 
+Pickup is a separate auditable workflow. Approval does not mean food was collected. The authoritative sequence is:
+
+`PENDING -> APPROVED -> PICKUP_SCHEDULED -> NGO_READY -> DONOR_READY -> READY -> IN_PROGRESS -> COLLECTED -> DISTRIBUTED -> COMPLETED`
+
+An exception may move an active pickup to `CANCELLED`, `MISSED`, or `FAILED`. Completed donations are terminal; reopening requires an explicit correction endpoint outside this Android API surface.
+
 ### POST /requests/{id}/pickup
 
-NGO creates or updates pickup scheduling.
+Either party may create or update scheduling before collection. Requires an `APPROVED` request.
 
 ```json
 {
   "scheduledAt": "2026-11-05T22:00:00Z",
+  "contactPerson": "Sunil Mehta",
+  "collectionInstructions": "Use the loading dock.",
+  "expectedQuantity": 60,
   "volunteerName": "Ravi Kumar",
-  "volunteerPhone": "+919812345678",
-  "vehicleDetails": "KA01AB1234"
+  "volunteerPhone": "+919812345678"
 }
 ```
 
 ### PATCH /pickups/{id}
 
-Update schedule or volunteer details before collection.
+Update schedule, contact, or volunteer details before collection only.
+
+### POST /pickups/{id}/ngo-ready
+
+NGO confirms volunteer readiness. Body may include `volunteerName`, `volunteerPhone`, and `evidenceRefs`.
+
+### POST /pickups/{id}/donor-ready
+
+Donor confirms handover readiness. Body may include `contactPerson`, `collectionInstructions`, and `evidenceRefs`.
 
 ### POST /pickups/{id}/start
 
-Marks pickup as IN_PROGRESS.
+Moves a ready pickup to `IN_PROGRESS`.
 
 ### POST /pickups/{id}/collected
 
-NGO confirms collection with optional proof image and notes.
-
-```json
-{ "collectedAt": "2026-11-05T22:15:00Z", "proofImageRef": "doc_200", "note": "Sealed containers verified." }
-```
-
-### POST /pickups/{id}/distributed
-
-NGO confirms distribution.
+NGO confirms physical collection and records the **actual** quantity.
 
 ```json
 {
+  "collectedAt": "2026-11-05T22:15:00Z",
+  "actualCollectedQuantity": 55,
+  "note": "Five packs were damaged.",
+  "proofImageRefs": ["doc_200"]
+}
+```
+
+Server rules:
+
+- Both readiness confirmations must exist before collection.
+- `actualCollectedQuantity` must be positive and cannot exceed `approvedQuantity`.
+- If `actualCollectedQuantity < approvedQuantity`, the uncollected allocation is released atomically and a quantity-discrepancy event is written.
+- Collection updates pickup, request, and donation status to `COLLECTED` and prevents duplicate collection confirmations.
+
+### POST /pickups/{id}/distributed
+
+NGO confirms aggregate distribution after collection.
+
+```json
+{
+  "actualReceivedQuantity": 55,
+  "actualDistributedQuantity": 52,
+  "beneficiariesServed": 60,
   "distributedAt": "2026-11-05T23:30:00Z",
-  "mealsDistributed": 60,
-  "distributionLocation": "Community kitchen, Shivajinagar",
-  "notes": "Served to 60 people."
+  "location": "Community kitchen, Shivajinagar",
+  "remainingQuantity": 3,
+  "notes": "Served to 60 people.",
+  "evidenceRefs": ["doc_201"]
 }
 ```
 
 Rules:
 
-- Distributed quantity cannot exceed approved quantity.
 - Collection must be confirmed first.
-- Completion updates both request and donation status.
+- `actualDistributedQuantity` cannot exceed `actualCollectedQuantity`.
+- Records must contain aggregate counts only; beneficiary names, phone numbers, addresses, and identity documents are prohibited.
+- `evidenceRefs` are server object keys, not personal information.
+
+### POST /pickups/{id}/complete
+
+Donor closes the pickup after distribution. Completion updates pickup, request, and donation to `COMPLETED` and writes an audit event.
+
+### POST /pickups/{id}/exception
+
+Either party records an exception for an active pickup.
+
+```json
+{
+  "reason": "VEHICLE_FAILURE",
+  "note": "NGO vehicle broke down.",
+  "evidenceRefs": ["doc_202"]
+}
+```
+
+Server rules:
+
+- Cancels the pickup and request and releases any uncollected allocation atomically.
+- Writes an auditable exception event and notifies the other party.
+- Does not delete any earlier timeline event.
+
+### GET /pickups
+
+Query: `roleContext=donor|ngo`, `status`, `from`, `to`, `page`, `pageSize`.
+
+### GET /pickups/{id}
+
+Accessible only to the owning NGO and the donation owner. Returns pickup details, distribution data if present, and current status.
+
+### GET /pickups/{id}/timeline
+
+Returns immutable workflow events ordered by `occurredAt`: actor, role, stage, note, evidence refs, and created timestamp.
 
 ## 10. Notifications
 
@@ -488,8 +563,12 @@ REQUEST_CANCELLED
 PICKUP_SCHEDULED
 PICKUP_REMINDER
 DEADLINE_APPROACHING
+PICKUP_NGO_READY
+PICKUP_DONOR_READY
+PICKUP_COLLECTED
 COLLECTION_CONFIRMED
 DISTRIBUTION_CONFIRMED
+PICKUP_EXCEPTION
 DONATION_COMPLETED
 NGO_VERIFICATION_APPROVED
 NGO_VERIFICATION_REJECTED
@@ -549,7 +628,9 @@ ngoProfiles       { _id, userId(unique), ngoName, registrationNumber, verificati
 documents         { _id, ownerUserId, purpose, objectKey, mimeType, status, createdAt }
 donations         { _id, donorId, title, description, category, images, totalQuantity, remainingQuantity, quantityUnit, dietType, preparedAt, pickupWindowStart, pickupWindowEnd, collectionDeadline, location(2dsphere), address, safety, status, version, createdAt, updatedAt }
 donationRequests  { _id, donationId, ngoId, requestedQuantity, approvedQuantity, status, estimatedPickupAt, idempotencyKey(unique), createdAt, updatedAt }
-pickups           { _id, requestId(unique), donationId, ngoId, scheduledAt, volunteer, status, collectedAt, distributedAt, mealsDistributed, proofImageRef }
+pickups           { _id, requestId(unique), donationId, ngoId, donorId, status, schedule, ngoReady, donorReady, actualCollectedQuantity, quantityDiscrepancy, collectedAt, proofImageRefs, exceptionReason, distribution, version, createdAt, updatedAt }
+distributions     { _id, pickupId(unique), requestId, donationId, actualReceivedQuantity, actualDistributedQuantity, beneficiariesServed, distributedAt, location, remainingQuantity, notes, evidenceRefs }
+pickupEvents      { _id, pickupId, requestId, donationId, stage, actorId, actorRole, note, evidenceRefs, occurredAt }
 notifications     { _id, userId, type, title, body, referenceId, isRead, createdAt }
 donationHistory   { _id, donationId, requestId, eventType, actorId, actorRole, note, occurredAt }
 safetyReports     { _id, donationId, requestId, reporterId, reason, description, evidenceRefs, status, resolution, createdAt, updatedAt }
@@ -560,6 +641,8 @@ Indexes:
 
 - `donations`: `{ status: 1, collectionDeadline: 1 }`, `{ location: "2dsphere" }`, `{ donorId: 1, createdAt: -1 }`
 - `donationRequests`: unique `{ donationId: 1, ngoId: 1, active: 1 }`, `{ ngoId: 1, status: 1 }`
+- `pickups`: unique `{ requestId: 1 }`, `{ donorId: 1, status: 1, createdAt: -1 }`, `{ ngoId: 1, status: 1, createdAt: -1 }`
+- `pickupEvents`: `{ pickupId: 1, occurredAt: 1 }`, `{ requestId: 1, occurredAt: 1 }`
 - `notifications`: `{ userId: 1, isRead: 1, createdAt: -1 }`
 - `idempotencyKeys`: TTL on `expiresAt`
 
@@ -595,7 +678,11 @@ await session.withTransaction(async () => {
 });
 ```
 
-On rejection before approval no quantity changes. On cancellation of an approved or scheduled request before collection, return the approved quantity atomically. Local debug mocks can only provide atomicity inside one Android process; they are not a cross-device reservation.
+On rejection before approval no quantity changes. On cancellation of an approved or scheduled request before collection, return the approved quantity atomically.
+
+Pickup collection uses the same transaction discipline: the pickup status transition, actual quantity, donation allocation release for a short collection, request status, donation status, notifications, and pickup timeline event must all succeed or fail together. Distribution, completion, and exception transitions must also write their audit events in the same transaction as status changes. The backend must reject stale transitions from any client with `409 INVALID_TRANSITION`; client mocks are convenience state only.
+
+Local debug mocks can only provide atomicity inside one Android process; they are not a cross-device reservation or an authoritative record.
 
 ## 15. Future AI Extensions
 

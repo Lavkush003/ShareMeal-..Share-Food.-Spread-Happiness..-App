@@ -34,6 +34,11 @@ import com.sharemeal.app.feature.discovery.FoodDiscoveryScreen
 import com.sharemeal.app.feature.donation.FoodDonationScreen
 import com.sharemeal.app.feature.notifications.NotificationsScreen
 import com.sharemeal.app.feature.onboarding.OnboardingScreen
+import com.sharemeal.app.feature.pickup.PickupActionScreen
+import com.sharemeal.app.feature.pickup.PickupActionType
+import com.sharemeal.app.feature.pickup.PickupDetailScreen
+import com.sharemeal.app.feature.pickup.PickupListMode
+import com.sharemeal.app.feature.pickup.PickupListScreen
 import com.sharemeal.app.feature.profile.ProfileScreen
 import com.sharemeal.app.feature.requests.DonorRequestsScreen
 import com.sharemeal.app.feature.requests.NgoRequestsScreen
@@ -156,6 +161,8 @@ fun ShareMealApp(
                             onAddDonation = { navController.navigate(Routes.DONOR_ADD_DONATION) },
                             onMyDonations = { navController.navigate(Routes.DONOR_DONATIONS) },
                             onRequests = { navController.navigate(Routes.DONOR_REQUESTS) },
+                            onPickups = { navController.navigate(Routes.DONOR_PICKUPS) },
+                            onCompleted = { navController.navigate(Routes.DONOR_COMPLETED) },
                             onHistory = { navController.navigate(Routes.DONOR_HISTORY) },
                             onNotifications = { navController.navigate(Routes.NOTIFICATIONS) },
                             onProfile = { navController.navigate(Routes.PROFILE) },
@@ -173,6 +180,7 @@ fun ShareMealApp(
                             onDiscovery = { navController.navigate(Routes.NGO_DISCOVERY) },
                             onRequests = { navController.navigate(Routes.NGO_REQUESTS) },
                             onPickups = { navController.navigate(Routes.NGO_PICKUPS) },
+                            onCompleted = { navController.navigate(Routes.NGO_COMPLETED) },
                             onHistory = { navController.navigate(Routes.NGO_HISTORY) },
                             onNotifications = { navController.navigate(Routes.NOTIFICATIONS) },
                             onProfile = { navController.navigate(Routes.PROFILE) },
@@ -267,11 +275,56 @@ fun ShareMealApp(
                         requiredRole = UserRole.NGO,
                         navController = navController
                     ) {
-                        NgoRequestsScreen(
+                        PickupListScreen(
+                            mode = PickupListMode.UPCOMING,
                             onBack = { navController.popBackStack() },
-                            onDiscovery = { navController.navigate(Routes.NGO_DISCOVERY) },
-                            onRequestSelected = {
-                                navController.navigate(Routes.requestDetailRoute(it))
+                            onPickupSelected = {
+                                navController.navigate(Routes.pickupDetailRoute(it))
+                            }
+                        )
+                    }
+                }
+
+                composable(Routes.DONOR_PICKUPS) {
+                    SessionRoute(
+                        requiredRole = UserRole.DONOR,
+                        navController = navController
+                    ) {
+                        PickupListScreen(
+                            mode = PickupListMode.UPCOMING,
+                            onBack = { navController.popBackStack() },
+                            onPickupSelected = {
+                                navController.navigate(Routes.pickupDetailRoute(it))
+                            }
+                        )
+                    }
+                }
+
+                composable(Routes.DONOR_COMPLETED) {
+                    SessionRoute(
+                        requiredRole = UserRole.DONOR,
+                        navController = navController
+                    ) {
+                        PickupListScreen(
+                            mode = PickupListMode.COMPLETED,
+                            onBack = { navController.popBackStack() },
+                            onPickupSelected = {
+                                navController.navigate(Routes.pickupDetailRoute(it))
+                            }
+                        )
+                    }
+                }
+
+                composable(Routes.NGO_COMPLETED) {
+                    SessionRoute(
+                        requiredRole = UserRole.NGO,
+                        navController = navController
+                    ) {
+                        PickupListScreen(
+                            mode = PickupListMode.COMPLETED,
+                            onBack = { navController.popBackStack() },
+                            onPickupSelected = {
+                                navController.navigate(Routes.pickupDetailRoute(it))
                             }
                         )
                     }
@@ -319,12 +372,66 @@ fun ShareMealApp(
                     }
                 }
 
-                composable(Routes.REQUEST_DETAIL) {
+                composable(Routes.REQUEST_DETAIL) { backStackEntry ->
+                    val requestId = backStackEntry.arguments?.getString(Routes.ARG_REQUEST_ID).orEmpty()
                     SessionRoute(
                         requiredRole = null,
                         navController = navController
                     ) {
-                        RequestDetailScreen(onBack = { navController.popBackStack() })
+                        RequestDetailScreen(
+                            onBack = { navController.popBackStack() },
+                            onOpenPickup = {
+                                navController.navigate(Routes.pickupDetailRoute(requestId))
+                            }
+                        )
+                    }
+                }
+
+                composable(Routes.PICKUP_HISTORY) {
+                    SessionRoute(
+                        requiredRole = null,
+                        navController = navController
+                    ) {
+                        PickupListScreen(
+                            mode = PickupListMode.HISTORY,
+                            onBack = { navController.popBackStack() },
+                            onPickupSelected = {
+                                navController.navigate(Routes.pickupDetailRoute(it))
+                            }
+                        )
+                    }
+                }
+
+                composable(Routes.PICKUP_DETAIL) { backStackEntry ->
+                    val requestId = backStackEntry.arguments?.getString(Routes.ARG_REQUEST_ID).orEmpty()
+                    SessionRoute(
+                        requiredRole = null,
+                        navController = navController
+                    ) {
+                        PickupDetailScreen(
+                            onBack = { navController.popBackStack() },
+                            onAction = { action ->
+                                navController.navigate(Routes.pickupActionRoute(action.name, requestId))
+                            }
+                        )
+                    }
+                }
+
+                composable(Routes.PICKUP_ACTION) { backStackEntry ->
+                    val action = PickupActionType.from(
+                        backStackEntry.arguments?.getString(Routes.ARG_PICKUP_ACTION)
+                    )
+                    SessionRoute(
+                        requiredRole = null,
+                        navController = navController
+                    ) {
+                        if (action != null) {
+                            PickupActionScreen(
+                                action = action,
+                                onBack = { navController.popBackStack() },
+                                onDone = { navController.popBackStack() }
+                            )
+                        }
                     }
                 }
 

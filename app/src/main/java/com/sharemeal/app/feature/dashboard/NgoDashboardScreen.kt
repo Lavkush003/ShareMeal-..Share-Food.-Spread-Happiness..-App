@@ -69,6 +69,7 @@ fun NgoDashboardScreen(
     onDiscovery: () -> Unit,
     onRequests: () -> Unit,
     onPickups: () -> Unit,
+    onCompleted: () -> Unit,
     onHistory: () -> Unit,
     onNotifications: () -> Unit,
     onProfile: () -> Unit,
@@ -96,6 +97,12 @@ fun NgoDashboardScreen(
             descriptionRes = R.string.ngo_action_pickups_body,
             icon = Icons.Rounded.LocalShipping,
             onClick = onPickups
+        ),
+        NgoDashboardAction(
+            titleRes = R.string.ngo_action_completed_title,
+            descriptionRes = R.string.ngo_action_completed_body,
+            icon = Icons.Rounded.CheckCircle,
+            onClick = onCompleted
         ),
         NgoDashboardAction(
             titleRes = R.string.donor_action_history_title,

@@ -9,7 +9,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AddCircle
+import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.History
+import androidx.compose.material.icons.rounded.LocalShipping
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Restaurant
@@ -33,6 +35,8 @@ fun DonorDashboardScreen(
     onAddDonation: () -> Unit,
     onMyDonations: () -> Unit,
     onRequests: () -> Unit,
+    onPickups: () -> Unit,
+    onCompleted: () -> Unit,
     onHistory: () -> Unit,
     onNotifications: () -> Unit,
     onProfile: () -> Unit,
@@ -57,6 +61,18 @@ fun DonorDashboardScreen(
             descriptionRes = R.string.donor_action_requests_body,
             icon = Icons.Rounded.Restaurant,
             onClick = onRequests
+        ),
+        DashboardAction(
+            titleRes = R.string.donor_action_pickups_title,
+            descriptionRes = R.string.donor_action_pickups_body,
+            icon = Icons.Rounded.LocalShipping,
+            onClick = onPickups
+        ),
+        DashboardAction(
+            titleRes = R.string.donor_action_completed_title,
+            descriptionRes = R.string.donor_action_completed_body,
+            icon = Icons.Rounded.CheckCircle,
+            onClick = onCompleted
         ),
         DashboardAction(
             titleRes = R.string.donor_action_history_title,

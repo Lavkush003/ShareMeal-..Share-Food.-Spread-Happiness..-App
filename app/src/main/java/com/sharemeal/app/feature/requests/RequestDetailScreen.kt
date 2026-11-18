@@ -56,6 +56,7 @@ import java.util.Locale
 @Composable
 fun RequestDetailScreen(
     onBack: () -> Unit,
+    onOpenPickup: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: RequestDetailViewModel = hiltViewModel()
 ) {
@@ -93,8 +94,7 @@ fun RequestDetailScreen(
                 onRejectClick = { showRejection = true },
                 onScheduleClick = { showScheduling = true },
                 onCancel = viewModel::cancel,
-                onCollect = viewModel::confirmCollected,
-                onComplete = viewModel::complete
+                onOpenPickup = { onOpenPickup(state.request!!.id) }
             )
         }
     }
@@ -140,8 +140,7 @@ private fun RequestDetailContent(
     onRejectClick: () -> Unit,
     onScheduleClick: () -> Unit,
     onCancel: () -> Unit,
-    onCollect: () -> Unit,
-    onComplete: () -> Unit
+    onOpenPickup: () -> Unit
 ) {
     val request = state.request ?: return
     val donation = state.donation
@@ -310,12 +309,14 @@ private fun RequestDetailContent(
                         )
                     }
                 }
-                DonationRequestStatus.COLLECTED -> {
+                DonationRequestStatus.PICKUP_SCHEDULED,
+                DonationRequestStatus.COLLECTED,
+                DonationRequestStatus.DISTRIBUTED -> {
                     item {
                         ShareMealButton(
-                            text = stringResource(R.string.request_action_complete),
-                            icon = Icons.Rounded.CheckCircle,
-                            onClick = onComplete
+                            text = stringResource(R.string.pickup_action_open),
+                            icon = Icons.Rounded.LocalShipping,
+                            onClick = onOpenPickup
                         )
                     }
                 }
@@ -329,17 +330,21 @@ private fun RequestDetailContent(
                     item {
                         ShareMealButton(text = stringResource(R.string.request_action_cancel), onClick = onCancel)
                     }
-                    if (request.status != DonationRequestStatus.PENDING) {
-                        item {
-                            ShareMealButton(
-                                text = stringResource(R.string.request_action_confirm_collection),
-                                icon = Icons.Rounded.LocalShipping,
-                                onClick = onCollect
-                            )
-                        }
-                    }
                 }
                 else -> Unit
+            }
+            if (request.status != DonationRequestStatus.PENDING &&
+                request.status != DonationRequestStatus.CANCELLED &&
+                request.status != DonationRequestStatus.REJECTED &&
+                request.status != DonationRequestStatus.COMPLETED
+            ) {
+                item {
+                    ShareMealButton(
+                        text = stringResource(R.string.pickup_action_open),
+                        icon = Icons.Rounded.LocalShipping,
+                        onClick = onOpenPickup
+                    )
+                }
             }
         }
     }

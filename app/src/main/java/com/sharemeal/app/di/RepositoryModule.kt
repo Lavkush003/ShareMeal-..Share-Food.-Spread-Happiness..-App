@@ -13,6 +13,8 @@ import com.sharemeal.app.data.donation.UnavailableDonationRepository
 import com.sharemeal.app.data.media.LocalPreviewImageRepository
 import com.sharemeal.app.data.notification.MockNotificationRepository
 import com.sharemeal.app.data.notification.UnavailableNotificationRepository
+import com.sharemeal.app.data.pickup.MockPickupRepository
+import com.sharemeal.app.data.pickup.UnavailablePickupRepository
 import com.sharemeal.app.data.request.MockDonationRequestRepository
 import com.sharemeal.app.data.request.UnavailableDonationRequestRepository
 import com.sharemeal.app.data.user.MockUserRepository
@@ -21,6 +23,7 @@ import com.sharemeal.app.domain.repository.AuthenticationRepository
 import com.sharemeal.app.domain.repository.DonationRepository
 import com.sharemeal.app.domain.repository.DonationRequestRepository
 import com.sharemeal.app.domain.repository.NotificationRepository
+import com.sharemeal.app.domain.repository.PickupRepository
 import com.sharemeal.app.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
@@ -103,6 +106,14 @@ object RepositoryProviderModule {
         mock: MockDonationRequestRepository,
         unavailable: UnavailableDonationRequestRepository
     ): DonationRequestRepository = if (appConfig.isMockMode) mock else unavailable
+
+    @Provides
+    @Singleton
+    fun providePickupRepository(
+        appConfig: AppConfig,
+        mock: MockPickupRepository,
+        unavailable: UnavailablePickupRepository
+    ): PickupRepository = if (appConfig.isMockMode) mock else unavailable
 
     @Provides
     @Singleton
