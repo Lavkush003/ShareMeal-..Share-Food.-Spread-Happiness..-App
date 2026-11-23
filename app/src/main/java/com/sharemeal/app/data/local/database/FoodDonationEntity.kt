@@ -48,6 +48,8 @@ data class FoodDonationEntity(
     val city: String,
     val state: String,
     @ColumnInfo(name = "pin_code") val pinCode: String,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
     @ColumnInfo(name = "contact_person") val contactPerson: String,
     @ColumnInfo(name = "contact_phone") val contactPhone: String,
     @ColumnInfo(name = "special_instructions") val specialInstructions: String?,

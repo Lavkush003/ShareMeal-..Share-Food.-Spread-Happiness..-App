@@ -10,5 +10,7 @@ sealed class AppError(message: String, cause: Throwable? = null) : Exception(mes
         message: String = "Please check the information provided."
     ) : AppError(message)
     class Conflict(message: String) : AppError(message)
+    class LocationPermissionDenied(message: String = "Location permission was not granted.") : AppError(message)
+    class LocationUnavailable(message: String = "Location is unavailable. Enter an address instead.") : AppError(message)
     class Unknown(message: String = "Something went wrong.", cause: Throwable? = null) : AppError(message, cause)
 }

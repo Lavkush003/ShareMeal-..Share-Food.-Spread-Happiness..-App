@@ -87,7 +87,7 @@ fun NotificationsScreen(
                             formatter = formatter,
                             onClick = {
                                 viewModel.markRead(notification.id)
-                                onNotificationSelected(notification.requestId)
+                                notification.requestId?.let(onNotificationSelected)
                             }
                         )
                     }

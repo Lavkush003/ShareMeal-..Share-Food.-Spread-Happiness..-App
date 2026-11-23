@@ -14,7 +14,10 @@ enum class AppNotificationType {
     PICKUP_COLLECTED,
     DISTRIBUTION_CONFIRMED,
     PICKUP_EXCEPTION,
-    DONATION_COMPLETED
+    DONATION_COMPLETED,
+    PICKUP_REMINDER,
+    NGO_VERIFICATION_UPDATE,
+    SAFETY_ALERT
 }
 
 @Serializable
@@ -24,7 +27,7 @@ data class AppNotification(
     val type: AppNotificationType,
     val title: String,
     val body: String,
-    val requestId: String,
+    val requestId: String? = null,
     val donationId: String? = null,
     val createdAt: Long,
     val isRead: Boolean = false

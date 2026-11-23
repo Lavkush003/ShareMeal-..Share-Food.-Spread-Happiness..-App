@@ -29,6 +29,7 @@ data class FoodDonation(
     val contactPerson: String,
     val contactPhone: String,
     val specialInstructions: String?,
+    val location: GeoPoint? = null,
     val status: DonationStatus = DonationStatus.PUBLISHED,
     val remainingQuantity: Int = quantity,
     val createdAt: Long

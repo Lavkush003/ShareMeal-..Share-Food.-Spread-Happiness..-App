@@ -57,7 +57,7 @@ object AppModule {
         ShareMealDatabase::class.java,
         ShareMealDatabase.DATABASE_NAME
     )
-        .addMigrations(ShareMealDatabase.MIGRATION_1_2)
+        .addMigrations(ShareMealDatabase.MIGRATION_1_2, ShareMealDatabase.MIGRATION_2_3)
         .build()
 
     @Provides

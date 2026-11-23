@@ -20,7 +20,7 @@ data class NotificationEntity(
     val type: String,
     val title: String,
     val body: String,
-    @ColumnInfo(name = "request_id") val requestId: String,
+    @ColumnInfo(name = "request_id") val requestId: String?,
     @ColumnInfo(name = "donation_id") val donationId: String?,
     @ColumnInfo(name = "created_at") val createdAt: Long,
     @ColumnInfo(name = "is_read") val isRead: Boolean,

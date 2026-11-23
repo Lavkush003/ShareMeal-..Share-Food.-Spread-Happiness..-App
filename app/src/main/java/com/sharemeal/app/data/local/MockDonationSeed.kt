@@ -5,6 +5,7 @@ import com.sharemeal.app.domain.model.DonationStatus
 import com.sharemeal.app.domain.model.FoodCategory
 import com.sharemeal.app.domain.model.FoodClassification
 import com.sharemeal.app.domain.model.FoodDonation
+import com.sharemeal.app.domain.model.GeoPoint
 
 /** Shared Phase 3 seed listings. There is exactly one donor record source: [MockDonationStore]. */
 object MockDonationSeed {
@@ -39,6 +40,7 @@ object MockDonationSeed {
                 contactPerson = "Aarav Sharma",
                 contactPhone = "9876543210",
                 specialInstructions = "Please collect from rear entrance gate 2.",
+                location = GeoPoint(12.9250, 77.5838),
                 createdAt = now - hour
             ),
             FoodDonation(
@@ -66,6 +68,7 @@ object MockDonationSeed {
                 contactPerson = "Priya Nair",
                 contactPhone = "9876543212",
                 specialInstructions = "Park in visitor bay A.",
+                location = GeoPoint(12.9750, 77.6050),
                 createdAt = now - 3 * hour
             ),
             FoodDonation(
@@ -93,6 +96,7 @@ object MockDonationSeed {
                 contactPerson = "Karan Verma",
                 contactPhone = "9876543213",
                 specialInstructions = "Call contact person upon arrival for entry pass.",
+                location = GeoPoint(12.9719, 77.6412),
                 createdAt = now - 2 * hour
             ),
             FoodDonation(
@@ -120,7 +124,64 @@ object MockDonationSeed {
                 contactPerson = "Sunil Mehta",
                 contactPhone = "9876543214",
                 specialInstructions = "Loading dock assistance available.",
+                location = GeoPoint(12.9352, 77.6245),
                 createdAt = now - 5 * hour
+            ),
+            FoodDonation(
+                id = "sample_don_5",
+                donorId = DemoDonorId,
+                title = "Pune Community Kitchen Meals",
+                description = "Freshly cooked vegetarian meals from a community kitchen surplus batch.",
+                category = FoodCategory.COOKED_MEAL,
+                images = emptyList(),
+                quantity = 60,
+                quantityUnit = DonationQuantityUnit.MEALS,
+                customQuantityUnit = null,
+                classification = FoodClassification.VEGETARIAN,
+                preparedAt = now - hour,
+                pickupWindowStart = now - hour,
+                pickupDeadline = now + 8 * hour,
+                storageConditions = "Kept in insulated hot boxes.",
+                packaging = "Sealed meal boxes.",
+                allergenInformation = "Contains gluten and dairy.",
+                foodConditionDeclared = true,
+                pickupAddress = "21, Baner Road",
+                city = "Pune",
+                state = "Maharashtra",
+                pinCode = "411045",
+                contactPerson = "Neha Kulkarni",
+                contactPhone = "9876543215",
+                specialInstructions = "Collect from the community hall entrance.",
+                location = GeoPoint(18.5590, 73.7868),
+                createdAt = now - hour
+            ),
+            FoodDonation(
+                id = "sample_don_6",
+                donorId = DemoDonorId,
+                title = "Delhi Bakery Surplus",
+                description = "Unsold bread and pastry stock from today's bakery production.",
+                category = FoodCategory.BAKERY,
+                images = emptyList(),
+                quantity = 30,
+                quantityUnit = DonationQuantityUnit.PACKETS,
+                customQuantityUnit = null,
+                classification = FoodClassification.VEGETARIAN,
+                preparedAt = now - 4 * hour,
+                pickupWindowStart = now - 3 * hour,
+                pickupDeadline = now + 10 * hour,
+                storageConditions = "Stored in dry bakery crates.",
+                packaging = "Paper bag packaging.",
+                allergenInformation = "Contains wheat, gluten, and nuts.",
+                foodConditionDeclared = true,
+                pickupAddress = "7, Connaught Place",
+                city = "New Delhi",
+                state = "Delhi",
+                pinCode = "110001",
+                contactPerson = "Rohit Khanna",
+                contactPhone = "9876543216",
+                specialInstructions = "Please call before arrival.",
+                location = GeoPoint(28.6315, 77.2167),
+                createdAt = now - 4 * hour
             )
         )
     }

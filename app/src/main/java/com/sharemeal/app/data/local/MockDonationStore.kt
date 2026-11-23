@@ -826,14 +826,14 @@ class MockDonationStore @Inject constructor() {
         }
     }
 
-    private fun notify(
+    fun addNotification(
         recipientId: String,
         type: AppNotificationType,
         title: String,
         body: String,
-        requestId: String,
-        donationId: String
-    ) {
+        requestId: String? = null,
+        donationId: String? = null
+    ): AppNotification {
         val notification = AppNotification(
             id = "ntf_${UUID.randomUUID()}",
             recipientId = recipientId,
@@ -845,6 +845,18 @@ class MockDonationStore @Inject constructor() {
             createdAt = System.currentTimeMillis()
         )
         _notifications.update { it + notification }
+        return notification
+    }
+
+    private fun notify(
+        recipientId: String,
+        type: AppNotificationType,
+        title: String,
+        body: String,
+        requestId: String? = null,
+        donationId: String? = null
+    ) {
+        addNotification(recipientId, type, title, body, requestId, donationId)
     }
 
     private fun requireParty(user: User, request: DonationRequest, donation: FoodDonation) {

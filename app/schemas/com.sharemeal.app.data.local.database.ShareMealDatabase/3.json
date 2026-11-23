@@ -1,0 +1,1492 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "a0d639bd40e88dc8e425143f1aeb740b",
+    "entities": [
+      {
+        "tableName": "users",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `email` TEXT NOT NULL, `mobile` TEXT NOT NULL, `role` TEXT NOT NULL, `display_name` TEXT NOT NULL, `created_at` INTEGER NOT NULL, `sync_server_id` TEXT, `sync_server_updated_at` INTEGER, `sync_state` TEXT NOT NULL, `sync_is_dirty` INTEGER NOT NULL, `sync_last_error` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "email",
+            "columnName": "email",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mobile",
+            "columnName": "mobile",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "role",
+            "columnName": "role",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "display_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.serverId",
+            "columnName": "sync_server_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "sync.serverUpdatedAt",
+            "columnName": "sync_server_updated_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "sync.syncState",
+            "columnName": "sync_state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.isDirty",
+            "columnName": "sync_is_dirty",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.lastError",
+            "columnName": "sync_last_error",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_users_email",
+            "unique": true,
+            "columnNames": [
+              "email"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_users_email` ON `${TABLE_NAME}` (`email`)"
+          },
+          {
+            "name": "index_users_sync_state",
+            "unique": false,
+            "columnNames": [
+              "sync_state"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_users_sync_state` ON `${TABLE_NAME}` (`sync_state`)"
+          },
+          {
+            "name": "index_users_sync_server_id",
+            "unique": false,
+            "columnNames": [
+              "sync_server_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_users_sync_server_id` ON `${TABLE_NAME}` (`sync_server_id`)"
+          }
+        ]
+      },
+      {
+        "tableName": "donor_profiles",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`user_id` TEXT NOT NULL, `full_name` TEXT NOT NULL, `organization_name` TEXT, `category` TEXT NOT NULL, `address_line1` TEXT NOT NULL, `city` TEXT NOT NULL, `state` TEXT NOT NULL, `pin_code` TEXT NOT NULL, `sync_server_id` TEXT, `sync_server_updated_at` INTEGER, `sync_state` TEXT NOT NULL, `sync_is_dirty` INTEGER NOT NULL, `sync_last_error` TEXT, PRIMARY KEY(`user_id`), FOREIGN KEY(`user_id`) REFERENCES `users`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fullName",
+            "columnName": "full_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "organizationName",
+            "columnName": "organization_name",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "category",
+            "columnName": "category",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "addressLine1",
+            "columnName": "address_line1",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "city",
+            "columnName": "city",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "state",
+            "columnName": "state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pinCode",
+            "columnName": "pin_code",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.serverId",
+            "columnName": "sync_server_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "sync.serverUpdatedAt",
+            "columnName": "sync_server_updated_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "sync.syncState",
+            "columnName": "sync_state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.isDirty",
+            "columnName": "sync_is_dirty",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.lastError",
+            "columnName": "sync_last_error",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "user_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_donor_profiles_user_id",
+            "unique": true,
+            "columnNames": [
+              "user_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_donor_profiles_user_id` ON `${TABLE_NAME}` (`user_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "users",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "ngo_profiles",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`user_id` TEXT NOT NULL, `ngo_name` TEXT NOT NULL, `registration_number` TEXT, `contact_person_name` TEXT NOT NULL, `address_line1` TEXT NOT NULL, `city` TEXT NOT NULL, `state` TEXT NOT NULL, `pin_code` TEXT NOT NULL, `operating_area` TEXT NOT NULL, `estimated_distribution_capacity` TEXT NOT NULL, `verification_document_info` TEXT NOT NULL, `verification_status` TEXT NOT NULL, `sync_server_id` TEXT, `sync_server_updated_at` INTEGER, `sync_state` TEXT NOT NULL, `sync_is_dirty` INTEGER NOT NULL, `sync_last_error` TEXT, PRIMARY KEY(`user_id`), FOREIGN KEY(`user_id`) REFERENCES `users`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ngoName",
+            "columnName": "ngo_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "registrationNumber",
+            "columnName": "registration_number",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "contactPersonName",
+            "columnName": "contact_person_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "addressLine1",
+            "columnName": "address_line1",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "city",
+            "columnName": "city",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "state",
+            "columnName": "state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pinCode",
+            "columnName": "pin_code",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "operatingArea",
+            "columnName": "operating_area",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "estimatedDistributionCapacity",
+            "columnName": "estimated_distribution_capacity",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "verificationDocumentInfo",
+            "columnName": "verification_document_info",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "verificationStatus",
+            "columnName": "verification_status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.serverId",
+            "columnName": "sync_server_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "sync.serverUpdatedAt",
+            "columnName": "sync_server_updated_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "sync.syncState",
+            "columnName": "sync_state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.isDirty",
+            "columnName": "sync_is_dirty",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.lastError",
+            "columnName": "sync_last_error",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "user_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_ngo_profiles_user_id",
+            "unique": true,
+            "columnNames": [
+              "user_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_ngo_profiles_user_id` ON `${TABLE_NAME}` (`user_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "users",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "food_donations",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `donor_id` TEXT NOT NULL, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `category` TEXT NOT NULL, `images` TEXT NOT NULL, `quantity` INTEGER NOT NULL, `quantity_unit` TEXT NOT NULL, `custom_quantity_unit` TEXT, `classification` TEXT NOT NULL, `prepared_at` INTEGER NOT NULL, `pickup_window_start` INTEGER NOT NULL, `pickup_deadline` INTEGER NOT NULL, `storage_conditions` TEXT NOT NULL, `packaging` TEXT NOT NULL, `allergen_information` TEXT NOT NULL, `food_condition_declared` INTEGER NOT NULL, `pickup_address` TEXT NOT NULL, `city` TEXT NOT NULL, `state` TEXT NOT NULL, `pin_code` TEXT NOT NULL, `latitude` REAL, `longitude` REAL, `contact_person` TEXT NOT NULL, `contact_phone` TEXT NOT NULL, `special_instructions` TEXT, `status` TEXT NOT NULL, `remaining_quantity` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `is_draft` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, `sync_server_id` TEXT, `sync_server_updated_at` INTEGER, `sync_state` TEXT NOT NULL, `sync_is_dirty` INTEGER NOT NULL, `sync_last_error` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`donor_id`) REFERENCES `users`(`id`) ON UPDATE NO ACTION ON DELETE RESTRICT )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "donorId",
+            "columnName": "donor_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "category",
+            "columnName": "category",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "images",
+            "columnName": "images",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "quantity",
+            "columnName": "quantity",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "quantityUnit",
+            "columnName": "quantity_unit",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "customQuantityUnit",
+            "columnName": "custom_quantity_unit",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "classification",
+            "columnName": "classification",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "preparedAt",
+            "columnName": "prepared_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pickupWindowStart",
+            "columnName": "pickup_window_start",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pickupDeadline",
+            "columnName": "pickup_deadline",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "storageConditions",
+            "columnName": "storage_conditions",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "packaging",
+            "columnName": "packaging",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "allergenInformation",
+            "columnName": "allergen_information",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "foodConditionDeclared",
+            "columnName": "food_condition_declared",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pickupAddress",
+            "columnName": "pickup_address",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "city",
+            "columnName": "city",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "state",
+            "columnName": "state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pinCode",
+            "columnName": "pin_code",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "contactPerson",
+            "columnName": "contact_person",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contactPhone",
+            "columnName": "contact_phone",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "specialInstructions",
+            "columnName": "special_instructions",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "remainingQuantity",
+            "columnName": "remaining_quantity",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isDraft",
+            "columnName": "is_draft",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updated_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.serverId",
+            "columnName": "sync_server_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "sync.serverUpdatedAt",
+            "columnName": "sync_server_updated_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "sync.syncState",
+            "columnName": "sync_state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.isDirty",
+            "columnName": "sync_is_dirty",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.lastError",
+            "columnName": "sync_last_error",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_food_donations_donor_id",
+            "unique": false,
+            "columnNames": [
+              "donor_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_food_donations_donor_id` ON `${TABLE_NAME}` (`donor_id`)"
+          },
+          {
+            "name": "index_food_donations_status",
+            "unique": false,
+            "columnNames": [
+              "status"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_food_donations_status` ON `${TABLE_NAME}` (`status`)"
+          },
+          {
+            "name": "index_food_donations_pickup_deadline",
+            "unique": false,
+            "columnNames": [
+              "pickup_deadline"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_food_donations_pickup_deadline` ON `${TABLE_NAME}` (`pickup_deadline`)"
+          },
+          {
+            "name": "index_food_donations_is_draft",
+            "unique": false,
+            "columnNames": [
+              "is_draft"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_food_donations_is_draft` ON `${TABLE_NAME}` (`is_draft`)"
+          },
+          {
+            "name": "index_food_donations_sync_state",
+            "unique": false,
+            "columnNames": [
+              "sync_state"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_food_donations_sync_state` ON `${TABLE_NAME}` (`sync_state`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "users",
+            "onDelete": "RESTRICT",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "donor_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "donation_requests",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `donation_id` TEXT NOT NULL, `ngo_id` TEXT NOT NULL, `ngo_name` TEXT NOT NULL, `requested_quantity` INTEGER NOT NULL, `status` TEXT NOT NULL, `requested_at` INTEGER NOT NULL, `pickup_scheduled_time` INTEGER, `completed_at` INTEGER, `notes` TEXT, `approved_quantity` INTEGER, `people_to_serve` INTEGER, `expected_pickup_at` INTEGER, `donor_id` TEXT, `donation_title` TEXT, `rejection_reason` TEXT, `idempotency_key` TEXT, `updated_at` INTEGER, `sync_server_id` TEXT, `sync_server_updated_at` INTEGER, `sync_state` TEXT NOT NULL, `sync_is_dirty` INTEGER NOT NULL, `sync_last_error` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`donation_id`) REFERENCES `food_donations`(`id`) ON UPDATE NO ACTION ON DELETE RESTRICT , FOREIGN KEY(`ngo_id`) REFERENCES `users`(`id`) ON UPDATE NO ACTION ON DELETE RESTRICT )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "donationId",
+            "columnName": "donation_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ngoId",
+            "columnName": "ngo_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ngoName",
+            "columnName": "ngo_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "requestedQuantity",
+            "columnName": "requested_quantity",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "requestedAt",
+            "columnName": "requested_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pickupScheduledTime",
+            "columnName": "pickup_scheduled_time",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "completedAt",
+            "columnName": "completed_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "approvedQuantity",
+            "columnName": "approved_quantity",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "peopleToServe",
+            "columnName": "people_to_serve",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "expectedPickupAt",
+            "columnName": "expected_pickup_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "donorId",
+            "columnName": "donor_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "donationTitle",
+            "columnName": "donation_title",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "rejectionReason",
+            "columnName": "rejection_reason",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "idempotencyKey",
+            "columnName": "idempotency_key",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updated_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "sync.serverId",
+            "columnName": "sync_server_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "sync.serverUpdatedAt",
+            "columnName": "sync_server_updated_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "sync.syncState",
+            "columnName": "sync_state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.isDirty",
+            "columnName": "sync_is_dirty",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.lastError",
+            "columnName": "sync_last_error",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_donation_requests_donation_id",
+            "unique": false,
+            "columnNames": [
+              "donation_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_donation_requests_donation_id` ON `${TABLE_NAME}` (`donation_id`)"
+          },
+          {
+            "name": "index_donation_requests_ngo_id",
+            "unique": false,
+            "columnNames": [
+              "ngo_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_donation_requests_ngo_id` ON `${TABLE_NAME}` (`ngo_id`)"
+          },
+          {
+            "name": "index_donation_requests_status",
+            "unique": false,
+            "columnNames": [
+              "status"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_donation_requests_status` ON `${TABLE_NAME}` (`status`)"
+          },
+          {
+            "name": "index_donation_requests_idempotency_key",
+            "unique": true,
+            "columnNames": [
+              "idempotency_key"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_donation_requests_idempotency_key` ON `${TABLE_NAME}` (`idempotency_key`)"
+          },
+          {
+            "name": "index_donation_requests_sync_state",
+            "unique": false,
+            "columnNames": [
+              "sync_state"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_donation_requests_sync_state` ON `${TABLE_NAME}` (`sync_state`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "food_donations",
+            "onDelete": "RESTRICT",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "donation_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "users",
+            "onDelete": "RESTRICT",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "ngo_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "pickups",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`request_id` TEXT NOT NULL, `donation_id` TEXT NOT NULL, `scheduled_at` INTEGER NOT NULL, `contact_person` TEXT NOT NULL, `collection_instructions` TEXT NOT NULL, `volunteer_name` TEXT NOT NULL, `volunteer_phone` TEXT NOT NULL, `expected_quantity` INTEGER NOT NULL, `status` TEXT NOT NULL, `ngo_ready_at` INTEGER, `donor_ready_at` INTEGER, `collected_at` INTEGER, `actual_collected_quantity` INTEGER, `quantity_discrepancy` INTEGER, `discrepancy_reason` TEXT, `exception_reason` TEXT, `exception_note` TEXT, `distribution_confirmed_at` INTEGER, `actual_received_quantity` INTEGER, `actual_distributed_quantity` INTEGER, `beneficiaries_served` INTEGER, `distributed_at` INTEGER, `distribution_location` TEXT, `remaining_distribution_quantity` INTEGER, `distribution_notes` TEXT, `evidence_refs` TEXT NOT NULL, `completed_at` INTEGER, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, `sync_server_id` TEXT, `sync_server_updated_at` INTEGER, `sync_state` TEXT NOT NULL, `sync_is_dirty` INTEGER NOT NULL, `sync_last_error` TEXT, PRIMARY KEY(`request_id`), FOREIGN KEY(`request_id`) REFERENCES `donation_requests`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`donation_id`) REFERENCES `food_donations`(`id`) ON UPDATE NO ACTION ON DELETE RESTRICT )",
+        "fields": [
+          {
+            "fieldPath": "requestId",
+            "columnName": "request_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "donationId",
+            "columnName": "donation_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scheduledAt",
+            "columnName": "scheduled_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contactPerson",
+            "columnName": "contact_person",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "collectionInstructions",
+            "columnName": "collection_instructions",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "volunteerName",
+            "columnName": "volunteer_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "volunteerPhone",
+            "columnName": "volunteer_phone",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "expectedQuantity",
+            "columnName": "expected_quantity",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ngoReadyAt",
+            "columnName": "ngo_ready_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "donorReadyAt",
+            "columnName": "donor_ready_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "collectedAt",
+            "columnName": "collected_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "actualCollectedQuantity",
+            "columnName": "actual_collected_quantity",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "quantityDiscrepancy",
+            "columnName": "quantity_discrepancy",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "discrepancyReason",
+            "columnName": "discrepancy_reason",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "exceptionReason",
+            "columnName": "exception_reason",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "exceptionNote",
+            "columnName": "exception_note",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "distributionConfirmedAt",
+            "columnName": "distribution_confirmed_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "actualReceivedQuantity",
+            "columnName": "actual_received_quantity",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "actualDistributedQuantity",
+            "columnName": "actual_distributed_quantity",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "beneficiariesServed",
+            "columnName": "beneficiaries_served",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "distributedAt",
+            "columnName": "distributed_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "distributionLocation",
+            "columnName": "distribution_location",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "remainingDistributionQuantity",
+            "columnName": "remaining_distribution_quantity",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "distributionNotes",
+            "columnName": "distribution_notes",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "evidenceRefs",
+            "columnName": "evidence_refs",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "completedAt",
+            "columnName": "completed_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updated_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.serverId",
+            "columnName": "sync_server_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "sync.serverUpdatedAt",
+            "columnName": "sync_server_updated_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "sync.syncState",
+            "columnName": "sync_state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.isDirty",
+            "columnName": "sync_is_dirty",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.lastError",
+            "columnName": "sync_last_error",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "request_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_pickups_request_id",
+            "unique": true,
+            "columnNames": [
+              "request_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_pickups_request_id` ON `${TABLE_NAME}` (`request_id`)"
+          },
+          {
+            "name": "index_pickups_donation_id",
+            "unique": false,
+            "columnNames": [
+              "donation_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_pickups_donation_id` ON `${TABLE_NAME}` (`donation_id`)"
+          },
+          {
+            "name": "index_pickups_status",
+            "unique": false,
+            "columnNames": [
+              "status"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_pickups_status` ON `${TABLE_NAME}` (`status`)"
+          },
+          {
+            "name": "index_pickups_sync_state",
+            "unique": false,
+            "columnNames": [
+              "sync_state"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_pickups_sync_state` ON `${TABLE_NAME}` (`sync_state`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "donation_requests",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "request_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "food_donations",
+            "onDelete": "RESTRICT",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "donation_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "notifications",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `recipient_id` TEXT NOT NULL, `type` TEXT NOT NULL, `title` TEXT NOT NULL, `body` TEXT NOT NULL, `request_id` TEXT, `donation_id` TEXT, `created_at` INTEGER NOT NULL, `is_read` INTEGER NOT NULL, `sync_server_id` TEXT, `sync_server_updated_at` INTEGER, `sync_state` TEXT NOT NULL, `sync_is_dirty` INTEGER NOT NULL, `sync_last_error` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recipientId",
+            "columnName": "recipient_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "body",
+            "columnName": "body",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "requestId",
+            "columnName": "request_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "donationId",
+            "columnName": "donation_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isRead",
+            "columnName": "is_read",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.serverId",
+            "columnName": "sync_server_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "sync.serverUpdatedAt",
+            "columnName": "sync_server_updated_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "sync.syncState",
+            "columnName": "sync_state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.isDirty",
+            "columnName": "sync_is_dirty",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.lastError",
+            "columnName": "sync_last_error",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_notifications_recipient_id_created_at",
+            "unique": false,
+            "columnNames": [
+              "recipient_id",
+              "created_at"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_notifications_recipient_id_created_at` ON `${TABLE_NAME}` (`recipient_id`, `created_at`)"
+          },
+          {
+            "name": "index_notifications_request_id",
+            "unique": false,
+            "columnNames": [
+              "request_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_notifications_request_id` ON `${TABLE_NAME}` (`request_id`)"
+          },
+          {
+            "name": "index_notifications_sync_state",
+            "unique": false,
+            "columnNames": [
+              "sync_state"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_notifications_sync_state` ON `${TABLE_NAME}` (`sync_state`)"
+          }
+        ]
+      },
+      {
+        "tableName": "donation_history",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `donation_id` TEXT NOT NULL, `request_id` TEXT NOT NULL, `stage` TEXT NOT NULL, `actor_id` TEXT NOT NULL, `actor_role` TEXT NOT NULL, `title` TEXT NOT NULL, `note` TEXT, `quantity` INTEGER, `created_at` INTEGER NOT NULL, `sync_server_id` TEXT, `sync_server_updated_at` INTEGER, `sync_state` TEXT NOT NULL, `sync_is_dirty` INTEGER NOT NULL, `sync_last_error` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`donation_id`) REFERENCES `food_donations`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "donationId",
+            "columnName": "donation_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "requestId",
+            "columnName": "request_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "stage",
+            "columnName": "stage",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "actorId",
+            "columnName": "actor_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "actorRole",
+            "columnName": "actor_role",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "note",
+            "columnName": "note",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "quantity",
+            "columnName": "quantity",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.serverId",
+            "columnName": "sync_server_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "sync.serverUpdatedAt",
+            "columnName": "sync_server_updated_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "sync.syncState",
+            "columnName": "sync_state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.isDirty",
+            "columnName": "sync_is_dirty",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sync.lastError",
+            "columnName": "sync_last_error",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_donation_history_donation_id_created_at",
+            "unique": false,
+            "columnNames": [
+              "donation_id",
+              "created_at"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_donation_history_donation_id_created_at` ON `${TABLE_NAME}` (`donation_id`, `created_at`)"
+          },
+          {
+            "name": "index_donation_history_request_id",
+            "unique": false,
+            "columnNames": [
+              "request_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_donation_history_request_id` ON `${TABLE_NAME}` (`request_id`)"
+          },
+          {
+            "name": "index_donation_history_sync_state",
+            "unique": false,
+            "columnNames": [
+              "sync_state"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_donation_history_sync_state` ON `${TABLE_NAME}` (`sync_state`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "food_donations",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "donation_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "pending_sync",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`operation_id` TEXT NOT NULL, `idempotency_key` TEXT NOT NULL, `type` TEXT NOT NULL, `entity_type` TEXT NOT NULL, `entity_id` TEXT NOT NULL, `path` TEXT NOT NULL, `method` TEXT NOT NULL, `payload_json` TEXT NOT NULL, `created_at` INTEGER NOT NULL, `attempt_count` INTEGER NOT NULL, `next_retry_at` INTEGER, `last_error` TEXT, `server_snapshot_json` TEXT, `status` TEXT NOT NULL, PRIMARY KEY(`operation_id`))",
+        "fields": [
+          {
+            "fieldPath": "operationId",
+            "columnName": "operation_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "idempotencyKey",
+            "columnName": "idempotency_key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "entityType",
+            "columnName": "entity_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "entityId",
+            "columnName": "entity_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "path",
+            "columnName": "path",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "method",
+            "columnName": "method",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "payloadJson",
+            "columnName": "payload_json",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "attemptCount",
+            "columnName": "attempt_count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nextRetryAt",
+            "columnName": "next_retry_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "lastError",
+            "columnName": "last_error",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "serverSnapshotJson",
+            "columnName": "server_snapshot_json",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "operation_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_pending_sync_idempotency_key",
+            "unique": true,
+            "columnNames": [
+              "idempotency_key"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_pending_sync_idempotency_key` ON `${TABLE_NAME}` (`idempotency_key`)"
+          },
+          {
+            "name": "index_pending_sync_status_next_retry_at",
+            "unique": false,
+            "columnNames": [
+              "status",
+              "next_retry_at"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_pending_sync_status_next_retry_at` ON `${TABLE_NAME}` (`status`, `next_retry_at`)"
+          },
+          {
+            "name": "index_pending_sync_entity_type_entity_id",
+            "unique": false,
+            "columnNames": [
+              "entity_type",
+              "entity_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_pending_sync_entity_type_entity_id` ON `${TABLE_NAME}` (`entity_type`, `entity_id`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a0d639bd40e88dc8e425143f1aeb740b')"
+    ]
+  }
+}

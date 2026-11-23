@@ -14,6 +14,7 @@ import com.sharemeal.app.domain.model.DonationStatus
 import com.sharemeal.app.domain.model.FoodCategory
 import com.sharemeal.app.domain.model.FoodClassification
 import com.sharemeal.app.domain.model.FoodDonation
+import com.sharemeal.app.domain.model.GeoPoint
 import com.sharemeal.app.domain.model.NgoProfile
 import com.sharemeal.app.domain.model.NgoVerificationStatus
 import com.sharemeal.app.domain.model.PendingOperation
@@ -134,6 +135,7 @@ object RoomEntityMapper {
         contactPerson = entity.contactPerson,
         contactPhone = entity.contactPhone,
         specialInstructions = entity.specialInstructions,
+        location = coordinates(entity.latitude, entity.longitude),
         status = enumValue(entity.status, DonationStatus.PUBLISHED),
         remainingQuantity = entity.remainingQuantity,
         createdAt = entity.createdAt
@@ -164,6 +166,8 @@ object RoomEntityMapper {
         contactPerson = donation.contactPerson,
         contactPhone = donation.contactPhone,
         specialInstructions = donation.specialInstructions,
+        latitude = donation.location?.latitude,
+        longitude = donation.location?.longitude,
         status = donation.status.name,
         remainingQuantity = donation.remainingQuantity,
         createdAt = donation.createdAt,
@@ -462,6 +466,13 @@ object RoomEntityMapper {
 
     private inline fun <reified T : Enum<T>> enumValue(value: String, fallback: T): T =
         enumValues<T>().firstOrNull { it.name == value } ?: fallback
+
+    private fun coordinates(latitude: Double?, longitude: Double?): GeoPoint? =
+        if (latitude == null || longitude == null) {
+            null
+        } else {
+            runCatching { GeoPoint(latitude, longitude) }.getOrNull()
+        }
 
     fun newDraftId(): String = "draft_${UUID.randomUUID()}"
 }

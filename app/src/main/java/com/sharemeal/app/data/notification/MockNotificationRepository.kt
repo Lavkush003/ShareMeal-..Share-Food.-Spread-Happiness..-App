@@ -4,6 +4,7 @@ import com.sharemeal.app.core.common.AppError
 import com.sharemeal.app.core.common.AppResult
 import com.sharemeal.app.data.local.MockDonationStore
 import com.sharemeal.app.domain.model.AppNotification
+import com.sharemeal.app.domain.model.AppNotificationType
 import com.sharemeal.app.domain.repository.NotificationRepository
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -32,5 +33,20 @@ class MockNotificationRepository @Inject constructor(
         AppResult.Success(Unit)
     } catch (error: Exception) {
         AppResult.Failure(AppError.Unknown("Could not update notifications.", cause = error))
+    }
+
+    override suspend fun postLocalNotification(
+        recipientId: String,
+        type: AppNotificationType,
+        title: String,
+        body: String,
+        requestId: String?,
+        donationId: String?
+    ): AppResult<AppNotification> = try {
+        AppResult.Success(
+            store.addNotification(recipientId, type, title, body, requestId, donationId)
+        )
+    } catch (error: Exception) {
+        AppResult.Failure(AppError.Unknown("Could not create the local notification.", cause = error))
     }
 }

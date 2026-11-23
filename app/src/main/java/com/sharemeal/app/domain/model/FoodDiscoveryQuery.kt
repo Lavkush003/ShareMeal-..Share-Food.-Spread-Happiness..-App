@@ -10,5 +10,6 @@ data class FoodDiscoveryQuery(
     val minQuantity: Int? = null,
     val maxDistanceKm: Double? = null,
     val maxDeadlineHours: Int? = null,
+    val center: GeoPoint? = null,
     val sortBy: FoodSortOrder = FoodSortOrder.NEWEST
 )

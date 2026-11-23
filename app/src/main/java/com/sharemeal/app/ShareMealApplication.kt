@@ -1,8 +1,11 @@
 package com.sharemeal.app
 
 import android.app.Application
+import com.sharemeal.app.core.notification.LocalNotificationDispatcher
 import com.sharemeal.app.data.offline.OfflineCacheCoordinator
+import com.sharemeal.app.core.config.AppConfig
 import com.sharemeal.app.data.sync.SyncManager
+import com.mapbox.common.MapboxOptions
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.HiltAndroidApp
@@ -18,8 +21,13 @@ class ShareMealApplication : Application() {
             this,
             OfflineEntryPoint::class.java
         )
+        val appConfig = entryPoint.appConfig()
+        if (appConfig.useMapbox) {
+            MapboxOptions.accessToken = appConfig.mapboxPublicToken
+        }
         entryPoint.offlineCacheCoordinator().start()
         entryPoint.syncManager().schedulePeriodicSync()
+        entryPoint.localNotificationDispatcher().start()
     }
 
     @EntryPoint
@@ -27,5 +35,7 @@ class ShareMealApplication : Application() {
     interface OfflineEntryPoint {
         fun offlineCacheCoordinator(): OfflineCacheCoordinator
         fun syncManager(): SyncManager
+        fun appConfig(): AppConfig
+        fun localNotificationDispatcher(): LocalNotificationDispatcher
     }
 }

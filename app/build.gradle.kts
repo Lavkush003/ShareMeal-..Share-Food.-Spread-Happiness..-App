@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -5,6 +7,25 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
 }
+
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) {
+        file.inputStream().use { load(it) }
+    }
+}
+
+fun localProperty(propertyName: String, environmentName: String): String =
+    System.getenv(environmentName)?.takeIf { it.isNotBlank() }
+        ?: localProperties.getProperty(propertyName, "").trim()
+
+fun quoted(value: String): String =
+    "\"${value.replace("\\", "\\\\").replace("\"", "\\\"")}\""
+
+val mapboxPublicToken = localProperty("mapbox.public.token", "MAPBOX_PUBLIC_TOKEN")
+val mapProvider = localProperty("map.provider", "MAP_PROVIDER")
+    .ifBlank { if (mapboxPublicToken.isBlank()) "ADDRESS_ONLY" else "MAPBOX" }
+    .uppercase()
 
 android {
     namespace = "com.sharemeal.app"
@@ -30,6 +51,8 @@ android {
             versionNameSuffix = "-debug"
             buildConfigField("boolean", "USE_MOCK_DATA", "true")
             buildConfigField("String", "API_BASE_URL", "\"https://api.sharemeal.app/api/v1/\"")
+            buildConfigField("String", "MAP_PROVIDER", quoted(mapProvider))
+            buildConfigField("String", "MAPBOX_PUBLIC_TOKEN", quoted(mapboxPublicToken))
         }
         release {
             optimization {
@@ -37,6 +60,8 @@ android {
             }
             buildConfigField("boolean", "USE_MOCK_DATA", "false")
             buildConfigField("String", "API_BASE_URL", "\"https://api.sharemeal.app/api/v1/\"")
+            buildConfigField("String", "MAP_PROVIDER", quoted(mapProvider))
+            buildConfigField("String", "MAPBOX_PUBLIC_TOKEN", quoted(mapboxPublicToken))
         }
     }
 
@@ -95,6 +120,10 @@ dependencies {
 
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+
+    implementation(libs.play.services.location)
+    implementation(libs.mapbox.maps)
+    implementation(libs.mapbox.maps.compose)
 
     testImplementation(libs.junit)
     testImplementation(libs.turbine)

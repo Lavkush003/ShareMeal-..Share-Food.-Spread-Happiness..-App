@@ -19,7 +19,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         DonationHistoryEntity::class,
         PendingSyncEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 @TypeConverters(RoomConverters::class)
@@ -105,6 +105,48 @@ abstract class ShareMealDatabase : RoomDatabase() {
                     "status",
                     "TEXT NOT NULL DEFAULT 'PENDING'"
                 )
+            }
+
+            private fun addColumnIfMissing(
+                db: SupportSQLiteDatabase,
+                table: String,
+                column: String,
+                definition: String
+            ) {
+                if (!tableExists(db, table) || columnExists(db, table, column)) return
+                db.execSQL("ALTER TABLE `$table` ADD COLUMN `$column` $definition")
+            }
+
+            private fun tableExists(db: SupportSQLiteDatabase, table: String): Boolean {
+                val cursor = db.query(
+                    "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ? LIMIT 1",
+                    arrayOf(table)
+                )
+                return cursor.use { it.count > 0 }
+            }
+
+            private fun columnExists(
+                db: SupportSQLiteDatabase,
+                table: String,
+                column: String
+            ): Boolean {
+                val cursor: Cursor = db.query("PRAGMA table_info(`$table`)")
+                return cursor.use {
+                    val nameIndex = it.getColumnIndex("name")
+                    if (nameIndex < 0) return false
+                    while (it.moveToNext()) {
+                        if (it.getString(nameIndex) == column) return true
+                    }
+                    false
+                }
+            }
+        }
+
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                addColumnIfMissing(db, "food_donations", "latitude", "REAL")
+                addColumnIfMissing(db, "food_donations", "longitude", "REAL")
+                addColumnIfMissing(db, "notifications", "request_id", "TEXT")
             }
 
             private fun addColumnIfMissing(
